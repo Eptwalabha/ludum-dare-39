@@ -1,8 +1,8 @@
 class Level {
 
     private map: Array<Array<TILE>>;
-    private width: number;
-    private height: number;
+    width: number;
+    height: number;
 
     constructor(width: number, height: number) {
         this.width = width;

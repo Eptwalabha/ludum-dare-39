@@ -25,6 +25,7 @@ class GameState extends Phaser.State {
     private tick_running: boolean = false;
     private tick_acc: number = 0;
     private entity_generator: EntityGenerator;
+    private engine: Matter.Engine;
 
     init(data) {
         this.data = data;
@@ -36,10 +37,15 @@ class GameState extends Phaser.State {
         this.entity_generator = new EntityGenerator(this);
         this.entities = [];
         this.turn_based_entities = [];
+        this.game.rnd.sow([3, 2, 1]);
+        this.game.rnd.integer();
 
-        let nbr_foe = 10
+        let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
-            var foe: Foe = new Foe(4 + i, 2, this.entity_generator);
+            var x = this.game.rnd.between(0, this.level.width - 1);
+            var y = this.game.rnd.between(0, this.level.height - 1);
+            console.log("x", x, "y", y);
+            var foe: Foe = new Foe(x, y, this.entity_generator);
             this.entities.push(foe);
             this.turn_based_entities.push(foe);
         }
@@ -47,7 +53,9 @@ class GameState extends Phaser.State {
 
     preload () {
         this.level.setDimensions(20, 20);
-        this.level.buildRandom(this.data.level, this.data.level_rnd)
+        this.level.buildRandom(this.data.level, this.data.level_rnd);
+        this.engine = Matter.Engine.create();
+        console.log(this.engine);
     }
 
     create () {
@@ -60,6 +68,7 @@ class GameState extends Phaser.State {
         }
         this.updateLevel(this.game.time.elapsedMS);
         this.updateEntities(this.game.time.elapsedMS);
+        Matter.Engine.update(this.engine, this.game.time.elapsedMS);
         this.cleanDeadEntities();
     }
 
@@ -70,7 +79,10 @@ class GameState extends Phaser.State {
         var self = this;
         this.entities.forEach(function(entity) {
             entity.debug(self.game, self.zoom);
-        })
+        });
+        this.turn_based_entities.forEach(function(entity) {
+            entity.debug(self.game, self.zoom);
+        });
     }
 
     checkPlayerMove () {
@@ -135,6 +147,10 @@ class GameState extends Phaser.State {
 
     addNewEntity (entity: GameEntity) {
         this.entities.push(entity);
+    }
+
+    addNewTurnBasedEntity (entity: TurnBasedGameEntity) {
+        this.turn_based_entities.push(entity);
     }
 
     private cleanDeadEntities() {

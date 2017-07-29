@@ -13,27 +13,27 @@ class Foe extends TurnBasedGameEntity {
         this.entity_generator = entity_generator;
         this.origin = new Phaser.Point(x, y);
         this.destination = new Phaser.Point(x, y);
-        this.shooting_rate = 2000;
+        this.shooting_rate = 1500;
         this.next_shooting = this.shooting_rate;
         this.shooting = true;
         this.angle = Math.random() * Math.PI * 2;
     }
 
     update (ts: number): void {
-        if (this.shooting) {
-            this.next_shooting -= ts;
-            if (this.next_shooting <= 0) {
-                // this.entity_generator.spawn_bullet(this, this.angle, 3);
-                this.entity_generator.spawn_bullet_wave(this, 8, 3);
-                this.next_shooting += this.shooting_rate;
-            }
+        this.next_shooting -= ts;
+        if (this.next_shooting <= 0) {
+            // this.entity_generator.spawn_bullet(this, this.angle, 2.5);
+            this.entity_generator.spawn_bullet_wave(this, 8, 3);
+            this.next_shooting += this.shooting_rate;
         }
         this.angle = Phaser.Math.wrapAngle(this.angle + (ts / 1000) * Math.PI / 3);
     }
 
     beginTick(): void {
         this.shooting = !this.shooting;
-        this.next_shooting = 0;
+        if (this.shooting) {
+            this.entity_generator.spawn_tb_bullet_wave(this, 5, 3);
+        }
     }
 
     updateTick(ts: number, percent: number): void {

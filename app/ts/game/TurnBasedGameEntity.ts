@@ -1,7 +1,7 @@
 abstract class TurnBasedGameEntity extends GameEntity {
 
-    constructor (x, y, color) {
-        super(x, y, color);
+    constructor (x: number, y: number, color: string, size = 1) {
+        super(x, y, color, size);
     }
 
     abstract beginTick(): void;

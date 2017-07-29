@@ -44,6 +44,13 @@ class MenuState extends Phaser.State {
         menu.onChildInputOver.add(MenuState.over, this);
         menu.onChildInputOut.add(MenuState.out, this);
         menu.onChildInputDown.add(MenuState.down, this);
+
+        // TODO remove for final version
+        var game_data = {
+            level: this.level,
+            level_rnd: new Phaser.RandomDataGenerator(this.seeds)
+        };
+        this.game.state.start('game', true, false, game_data);
     }
 
     static over(text: Phaser.Text) {
