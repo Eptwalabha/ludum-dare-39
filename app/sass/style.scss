@@ -1,6 +1,7 @@
 body {
   margin: 0;
   padding: 0;
+  background: #ccc;
 
   h1 {
     text-align: center;
@@ -9,11 +10,13 @@ body {
   }
 
   #game-container {
-    margin: auto;
+    left: 0;
+    right: 0;
+    margin: 10px auto auto;
+    background: white;
     width: 500px;
 
     & > canvas {
-      margin: 10px;
     }
   }
 }

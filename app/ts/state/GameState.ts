@@ -38,7 +38,7 @@ class GameState extends Phaser.State {
         this.game.rnd.sow([3, 2, 1]);
         this.game.rnd.integer();
 
-        let nbr_foe = 5;
+        let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
             var x = this.game.rnd.between(0, this.level.width - 1);
             var y = this.game.rnd.between(0, this.level.height - 1);

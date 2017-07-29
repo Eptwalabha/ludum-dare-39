@@ -29,9 +29,9 @@ class Level {
             for (var j = 0; j < this.width; ++j) {
                 var floor = new Phaser.Rectangle(i * scale - scale/2, j * scale - scale/2, scale, scale);
                 if (this.map[i][j] === TILE.FLOOR) {
-                    game.debug.geom(floor, '#0011ff');
+                    game.debug.geom(floor, '#9bb9ef');
                 } else {
-                    game.debug.geom(floor, '#ff1100');
+                    game.debug.geom(floor, '#0011ff');
                 }
             }
         }
