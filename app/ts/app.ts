@@ -3,18 +3,14 @@
 class SimpleGame {
 
     constructor() {
-        this.game = new Phaser.Game(500, 500, Phaser.AUTO, 'game-container', { create: this.create });
-    }
-
-    game: Phaser.Game;
-
-    create() {
-        var text = "Ouaich!";
-        var style = { font: "65px Arial", fill: "#ff0000", align: "center" };
-        this.game.add.text(0, 0, text, style);
+        var game = new Phaser.Game(500, 500, Phaser.AUTO, 'game-container');
+        game.state.add('loading', new LoadingState());
+        game.state.add('menu', new MenuState());
+        game.state.add('game', new GameState());
+        game.state.start('loading');
     }
 }
 
 window.onload = () => {
-    var game = new SimpleGame();
+    new SimpleGame();
 };
