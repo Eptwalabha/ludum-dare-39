@@ -20,13 +20,10 @@ class TBBullet extends TurnBasedGameEntity {
     }
 
     beginTick(): void {
-        // var x = this.origin.x + Math.cos(this.direction) * this.distance;
-        // var y = this.origin.y + Math.sin(this.direction) * this.distance;
-        // this.destination = new Phaser.Point(x, y);
+        this.ttl -= 1;
     }
 
     updateTick(ts: number, percent: number): void {
-        this.ttl -= 1;
         this.position.x = this.origin.x + this.normal.x * percent;
         this.position.y = this.origin.y + this.normal.y * percent;
         if (this.ttl === 0) {

@@ -19,8 +19,8 @@ class EntityGenerator {
     }
 
     spawn_tb_bullet (parent: Foe, direction: number, distance: number) {
-        var bullet: TBBullet = new TBBullet(parent, direction, distance, 10);
-        this.game_state.addNewTurnBasedEntity(bullet);
+        var bullet: TBBullet = new TBBullet(parent, direction, distance, 5);
+        this.game_state.addNewEntity(bullet);
     }
 
     spawn_tb_bullet_wave(parent: Foe, number: number, distance: number) {
