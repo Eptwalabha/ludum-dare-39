@@ -1,4 +1,4 @@
-class Robot extends GameEntity {
+class Robot extends TurnBasedGameEntity {
     power: number;
     position: Phaser.Point;
     private origin: Phaser.Point;

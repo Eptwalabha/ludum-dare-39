@@ -10,9 +10,9 @@ abstract class GameEntity {
         this.circle = new Phaser.Circle(this.position.x, this.position.y, 1);
     }
 
-    abstract beginTick(): void;
-    abstract updateTick(ts: number, percent: number): void;
-    abstract endTick(): void;
+    // abstract beginTick(): void;
+    // abstract updateTick(ts: number, percent: number): void;
+    // abstract endTick(): void;
 
     abstract update(ts: number);
 

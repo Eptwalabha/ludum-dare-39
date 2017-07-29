@@ -20,32 +20,36 @@ class GameState extends Phaser.State {
     private zoom: number = 20;
     private data;
     private entities: Array<GameEntity>;
+    private turn_based_entities: Array<TurnBasedGameEntity>;
     private tick_duration: number;
     private tick_running: boolean = false;
     private tick_acc: number = 0;
+    private entity_generator: EntityGenerator;
 
     init(data) {
-        console.log("init");
         this.data = data;
         this.mobile_entites = this.game.add.group();
         this.tiles = this.game.add.group();
         this.robot = new Robot(10, 10);
         this.level = new Level(20, 20);
         this.tick_duration = 150;
-        this.entities = [
-            // new Foe(2, 1),
-            new Foe(4, 2)
-        ];
+        this.entity_generator = new EntityGenerator();
+        this.entities = [];
+        this.turn_based_entities = [];
+
+        for (var i = 0; i < 1; ++i) {
+            var foe: Foe = new Foe(4 + i, 2, this.entity_generator);
+            this.entities.push(foe);
+            this.turn_based_entities.push(foe);
+        }
     }
 
     preload () {
-        console.log("preload");
         this.level.setDimensions(20, 20);
         this.level.buildRandom(this.data.level, this.data.level_rnd)
     }
 
     create () {
-        console.log("create");
     }
 
     update() {
@@ -100,7 +104,7 @@ class GameState extends Phaser.State {
                 this.tickEnd();
             } else {
                 this.robot.updateTick(ts, p);
-                this.entities.forEach(function (entity) {
+                this.turn_based_entities.forEach(function (entity) {
                     entity.updateTick(ts, p);
                 });
             }
@@ -114,15 +118,15 @@ class GameState extends Phaser.State {
     tickBegins () {
         this.tick_acc = 0;
         this.tick_running = true;
-        for (var i = 0; i < this.entities.length; ++i) {
-            this.entities[i].beginTick();
-        }
+        this.turn_based_entities.forEach(function (entity) {
+            entity.beginTick();
+        });
     }
 
     tickEnd () {
         this.tick_running = false;
         this.robot.endTick();
-        this.entities.forEach(function (entity) {
+        this.turn_based_entities.forEach(function (entity) {
             entity.endTick();
         });
     }
