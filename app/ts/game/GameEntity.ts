@@ -3,11 +3,15 @@ abstract class GameEntity {
     position: Phaser.Point;
     circle: Phaser.Circle;
     color: string;
+    dead: boolean;
+    size: number;
 
-    constructor (x, y, color) {
+    constructor (x, y, color, size = 1) {
         this.color = color;
         this.position = new Phaser.Point(x, y);
         this.circle = new Phaser.Circle(this.position.x, this.position.y, 1);
+        this.dead = false;
+        this.size = size;
     }
 
     // abstract beginTick(): void;
@@ -19,7 +23,7 @@ abstract class GameEntity {
     debug (game: Phaser.Game, scale: number) {
         this.circle.x = this.position.x * scale;
         this.circle.y = this.position.y * scale;
-        this.circle.diameter = scale;
+        this.circle.diameter = scale * this.size;
         game.debug.geom(this.circle, this.color);
     }
 }

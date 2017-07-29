@@ -33,11 +33,12 @@ class GameState extends Phaser.State {
         this.robot = new Robot(10, 10);
         this.level = new Level(20, 20);
         this.tick_duration = 150;
-        this.entity_generator = new EntityGenerator();
+        this.entity_generator = new EntityGenerator(this);
         this.entities = [];
         this.turn_based_entities = [];
 
-        for (var i = 0; i < 1; ++i) {
+        let nbr_foe = 10
+        for (var i = 0; i < nbr_foe; ++i) {
             var foe: Foe = new Foe(4 + i, 2, this.entity_generator);
             this.entities.push(foe);
             this.turn_based_entities.push(foe);
@@ -59,6 +60,7 @@ class GameState extends Phaser.State {
         }
         this.updateLevel(this.game.time.elapsedMS);
         this.updateEntities(this.game.time.elapsedMS);
+        this.cleanDeadEntities();
     }
 
     render () {
@@ -128,6 +130,23 @@ class GameState extends Phaser.State {
         this.robot.endTick();
         this.turn_based_entities.forEach(function (entity) {
             entity.endTick();
+        });
+    }
+
+    addNewEntity (entity: GameEntity) {
+        this.entities.push(entity);
+    }
+
+    private cleanDeadEntities() {
+        let to_remove: Array<number> = [];
+        var self = this;
+        this.entities.forEach(function (entity, i) {
+            if (entity.dead) {
+                to_remove.push(i);
+            }
+        });
+        to_remove.reverse().forEach(function (index) {
+            self.entities.splice(index, 1);
         });
     }
 }
