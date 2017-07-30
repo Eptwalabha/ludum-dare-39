@@ -25,7 +25,7 @@ class CWorld {
     constructor () {
         let width = 30;
         let height = 30;
-        let nbr = 5;
+        let nbr = 15;
 
         this.quad_def = {
             dimensions: new Phaser.Point(width, height),

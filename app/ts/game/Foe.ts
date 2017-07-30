@@ -13,7 +13,7 @@ class Foe extends TurnBasedGameEntity {
         this.entity_generator = entity_generator;
         this.origin = new Phaser.Point(x, y);
         this.destination = new Phaser.Point(x, y);
-        this.shooting_rate = 1500;
+        this.shooting_rate = 500;
         this.next_shooting = this.shooting_rate;
         this.shooting = 1;
         this.angle = Math.random() * Math.PI * 2;
@@ -23,7 +23,7 @@ class Foe extends TurnBasedGameEntity {
         this.next_shooting -= ts;
         if (this.next_shooting <= 0) {
             if (this.shooting !== 5) {
-                this.entity_generator.spawn_bullet_wave(this, 3, 5);
+                this.entity_generator.spawn_bullet_wave(this, 15, 5);
             }
             this.next_shooting += this.shooting_rate;
         }
@@ -31,20 +31,11 @@ class Foe extends TurnBasedGameEntity {
     }
 
     beginTick(): void {
-        this.shooting -= 1;
-        if (this.shooting === 0) {
-            this.entity_generator.spawn_tb_bullet_wave(this, 5, 1.5);
-            this.shooting = 5;
-        }
     }
 
     updateTick(ts: number, percent: number): void {
-        this.position.x = this.origin.x + (this.destination.x - this.origin.x) * percent;
-        this.position.y = this.origin.y + (this.destination.y - this.origin.y) * percent;
     }
 
     endTick(): void {
-        this.destination.clone(this.position);
-        this.destination.clone(this.origin);
     }
 }

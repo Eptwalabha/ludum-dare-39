@@ -13,7 +13,6 @@ enum MOVE {
 
 class GameState extends Phaser.State {
 
-    private mobile_entites: Phaser.Group;
     private tiles: Phaser.Group;
     private robot: Robot;
     private level: Level;
@@ -30,15 +29,14 @@ class GameState extends Phaser.State {
 
     init(data) {
         this.data = data;
-        this.mobile_entites = this.game.add.group();
         this.tiles = this.game.add.group();
-        this.level = new Level(20, 20);
         this.tick_duration = 150;
-        this.entity_generator = new EntityGenerator(this);
-        this.entities = [];
     }
 
     create () {
+        this.level = new Level(20, 20);
+        this.entity_generator = new EntityGenerator(this);
+        this.entities = [];
         this.collision_world = new CWorld();
         this.robot = new Robot(10, 10, this.collision_world);
         let self = this;
@@ -68,18 +66,21 @@ class GameState extends Phaser.State {
         this.updateEntities(this.game.time.elapsedMS);
         this.collision_world.run();
         this.cleanDeadEntities();
+        if (this.robot.power <= 0) {
+            this.game.state.start('game', true, false, this.data);
+        }
     }
 
     render () {
-        this.level.debug(this.game, this.zoom);
-
+        // this.level.debug(this.game, this.zoom);
+        //
         this.robot.debug(this.game, this.zoom);
-        var self = this;
-        this.entities.forEach(function(entity) {
-            entity.debug(self.game, self.zoom);
-        });
-        // this.graphics.clear();
-        // this.collision_world.debug(this.graphics, this.zoom);
+        // var self = this;
+        // this.entities.forEach(function(entity) {
+        //     entity.debug(self.game, self.zoom);
+        // });
+        this.graphics.clear();
+        this.collision_world.debug(this.graphics, this.zoom);
     }
 
     checkPlayerMove () {

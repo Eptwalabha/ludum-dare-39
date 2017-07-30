@@ -3,7 +3,7 @@ class Robot extends TurnBasedGameEntity {
     position: Phaser.Point;
     private origin: Phaser.Point;
     private destination: Phaser.Point;
-    private power_loss_rate = 3;
+    private power_loss_rate = 10;
 
     constructor(x: number, y: number, world: CWorld) {
         super(x, y, '#00ff00', .9);
@@ -56,5 +56,27 @@ class Robot extends TurnBasedGameEntity {
         }
 
         return level.getTileNatureAt(this.destination) === TILE.FLOOR;
+    }
+
+    debug (game: Phaser.Game, scale: number) {
+        super.debug(game, scale);
+
+        game.debug.rectangle(
+            new Phaser.Rectangle(
+                this.position.x * scale - 11,
+                this.position.y * scale - 12,
+                22,
+                6),
+            '#000000', true
+        );
+        game.debug.rectangle(
+            new Phaser.Rectangle(
+                this.position.x * scale - 10,
+                this.position.y * scale - 11,
+                20 * this.power / 100,
+                4
+            ),
+            '#00ff00', true
+        );
     }
 }

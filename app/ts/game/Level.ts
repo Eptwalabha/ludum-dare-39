@@ -1,3 +1,30 @@
+interface ILevel {
+    layout: string,
+    sprite_sheet?: string,
+    items?: Array<IItem>,
+    foes?: Array<IFoe>,
+    start?: { x: number, y: number },
+    end?: { x: number, y: number }
+}
+
+interface IRoomLayout {
+    layer: Array<Array<number>>,
+    start: { x: number, y: number },
+    end: { x: number, y: number }
+}
+
+interface IItem {
+    type: string,
+    position: { x: number, y: number }
+}
+
+interface  IFoe {
+    type: string,
+    position: { x: number, y: number },
+    angle?: number,
+    options?: any
+}
+
 class Level {
 
     private map: Array<Array<TILE>>;
