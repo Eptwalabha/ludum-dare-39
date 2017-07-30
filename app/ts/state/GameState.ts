@@ -49,7 +49,7 @@ class GameState extends Phaser.State {
         this.level.buildRandom(this.data.level, this.data.level_rnd, this.collision_world);
 
         this.game.rnd.sow([3, 2, 1]);
-        let nbr_foe = 1;
+        let nbr_foe = 10;
         for (var i = 0; i < nbr_foe; ++i) {
             var x = this.game.rnd.between(0, this.level.width - 1);
             var y = this.game.rnd.between(0, this.level.height - 1);
@@ -71,15 +71,15 @@ class GameState extends Phaser.State {
     }
 
     render () {
-        // this.level.debug(this.game, this.zoom);
-        //
-        // this.robot.debug(this.game, this.zoom);
-        // var self = this;
-        // this.entities.forEach(function(entity) {
-        //     entity.debug(self.game, self.zoom);
-        // });
-        this.graphics.clear();
-        this.collision_world.debug(this.graphics, this.zoom);
+        this.level.debug(this.game, this.zoom);
+
+        this.robot.debug(this.game, this.zoom);
+        var self = this;
+        this.entities.forEach(function(entity) {
+            entity.debug(self.game, self.zoom);
+        });
+        // this.graphics.clear();
+        // this.collision_world.debug(this.graphics, this.zoom);
     }
 
     checkPlayerMove () {
@@ -131,6 +131,7 @@ class GameState extends Phaser.State {
     tickBegins () {
         this.tick_acc = 0;
         this.tick_running = true;
+        this.robot.beginTick();
         this.entities.forEach(function (entity) {
             if (entity instanceof TurnBasedGameEntity) {
                 entity.beginTick();

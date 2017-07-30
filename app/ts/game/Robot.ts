@@ -17,7 +17,6 @@ class Robot extends TurnBasedGameEntity {
     }
 
     beginTick(): void {
-
     }
 
     updateTick(ts: number, percent: number): void {
@@ -30,8 +29,7 @@ class Robot extends TurnBasedGameEntity {
     endTick(): void {
         this.destination.clone(this.position);
         this.destination.clone(this.origin);
-        this.body.x = this.position.x;
-        this.body.y = this.position.y;
+        this.body.moveTo(this.position.x, this.position.y);
     }
 
     update(ts: number): void {

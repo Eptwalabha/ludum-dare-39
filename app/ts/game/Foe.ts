@@ -22,7 +22,9 @@ class Foe extends TurnBasedGameEntity {
     update (ts: number): void {
         this.next_shooting -= ts;
         if (this.next_shooting <= 0) {
-            this.entity_generator.spawn_bullet_wave(this, 8, 5);
+            if (this.shooting !== 5) {
+                this.entity_generator.spawn_bullet_wave(this, 3, 5);
+            }
             this.next_shooting += this.shooting_rate;
         }
         this.angle = Phaser.Math.wrapAngle(this.angle + (ts / 1000) * Math.PI / 3);
@@ -32,7 +34,7 @@ class Foe extends TurnBasedGameEntity {
         this.shooting -= 1;
         if (this.shooting === 0) {
             this.entity_generator.spawn_tb_bullet_wave(this, 5, 1.5);
-            this.shooting = 3;
+            this.shooting = 5;
         }
     }
 

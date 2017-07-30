@@ -14,7 +14,7 @@ interface BBox {
 
 class CWorld {
 
-    bodies: Array<CBody>;
+    bodies: {};
     quads: Array<Array<number>>;
     quad_def: CQuad;
 
@@ -25,7 +25,7 @@ class CWorld {
     constructor () {
         let width = 30;
         let height = 30;
-        let nbr = 10;
+        let nbr = 5;
 
         this.quad_def = {
             dimensions: new Phaser.Point(width, height),
@@ -48,12 +48,30 @@ class CWorld {
 
     getQuadIds (bbox: BBox) {
         let quads: Array<number> = [];
-        if (bbox.x < this.quad_def.position.x || bbox.x > this.quad_def.position.x + this.quad_def.dimensions.x ||
-            bbox.y < this.quad_def.position.y || bbox.y > this.quad_def.position.y + this.quad_def.dimensions.y) {
+        var x = bbox.x - this.quad_def.position.x;
+        var y = bbox.y - this.quad_def.position.y;
+        if (x < 0 || x > this.quad_def.dimensions.x || y < 0 || y > this.quad_def.dimensions.y) {
             return [0];
         }
-        // TODO determine which quad
+        var x2 = Math.floor(x / this.quad_def.cell_dimensions.x);
+        var y2 = Math.floor(y / this.quad_def.cell_dimensions.y);
+        var x3 = Math.floor((x + bbox.w) / this.quad_def.cell_dimensions.x);
+        var y3 = Math.floor((y + bbox.h) / this.quad_def.cell_dimensions.y);
+        for (var i = 0, size_i = x3 - x2 + 1; i < size_i; ++i) {
+            for (var j = 0, size_j = y3 - y2 + 1; j < size_j; ++j) {
+                var quad_id = this.getQuadId(x2 + 1, y2 + j);
+                if (quad_id === undefined) quad_id = 0;
+                quads.push(quad_id);
+            }
+        }
         return quads;
+    }
+
+    getQuadId (x, y) {
+        if (x >= 0 && y >= 0 && x < this.quad_def.grid.x && y < this.quad_def.grid.y) {
+            return y * this.quad_def.grid.y + x;
+        }
+        return 0;
     }
 
     addBody (body: CBody) {
@@ -85,10 +103,11 @@ class CWorld {
     updatePosition(body: CBody) {
         var new_quads = this.getQuadIds(body.getBoundingBox());
         this.removeBodyFromQuad(body);
-        body.quads = [];
+        body.quads = new_quads;
         for (var i = 0; i < new_quads.length; ++i) {
-            body.quads.push(new_quads[i]);
-            this.quads[i].push(body.id);
+            if (this.quads[new_quads[i]].indexOf(body.id) === -1) {
+                this.quads[new_quads[i]].push(body.id);
+            }
         }
     }
 
@@ -104,11 +123,23 @@ class CWorld {
                 graphics.drawRect(body.x * scale, body.y * scale, body.width * scale, body.height * scale);
             }
         }
+
+        graphics.lineStyle(1, 0xaa0000, 1);
+        for (var i = 0; i < this.quads.length; ++i) {
+            var x = (i % this.quad_def.grid.x) * this.quad_def.cell_dimensions.x + this.quad_def.position.x;
+            var y = Math.floor((i / this.quad_def.grid.x)) * this.quad_def.cell_dimensions.y + this.quad_def.position.y;
+            graphics.drawRect(
+                x * scale,
+                y * scale,
+                this.quad_def.cell_dimensions.x * scale,
+                this.quad_def.cell_dimensions.x * scale
+            );
+        }
     }
 
     run () {
         let self = this;
-        for (var i = 0; i < 10; ++i) {
+        for (var i = 0, size = (this.quad_def.grid.x * this.quad_def.grid.y); i < size; ++i) {
             if (this.quads[i].length > 1) self.checkCollisionFor(this.quads[i]);
         }
     }
@@ -122,7 +153,7 @@ class CWorld {
             let bodyA: CBody = this.bodies[ids[i]];
             for (var j = i + 1; j < ids.length; ++j) {
                 let bodyB: CBody = this.bodies[ids[j]];
-                if (CWorld.compatibleMask(bodyA, bodyB) && CWorld.checkCollision(bodyA, bodyB)) {
+                if ((bodyA && bodyB) && CWorld.compatibleMask(bodyA, bodyB) && CWorld.checkCollision(bodyA, bodyB)) {
                     this.onCollisionStart(bodyA, bodyB);
                 }
             }
