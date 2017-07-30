@@ -5,6 +5,7 @@ class TBBullet extends TurnBasedGameEntity {
     parent: GameEntity;
     origin: Phaser.Point;
     destination: Phaser.Point;
+    body: CBody;
 
     constructor (parent: GameEntity, direction: number, distance: number, ttl: number) {
         super(parent.position.x, parent.position.y, '#cccccc', 0.4);
@@ -26,6 +27,9 @@ class TBBullet extends TurnBasedGameEntity {
     updateTick(ts: number, percent: number): void {
         this.position.x = this.origin.x + this.normal.x * percent;
         this.position.y = this.origin.y + this.normal.y * percent;
+        if (this.body) {
+            this.body.moveTo(this.position.x, this.position.y);
+        }
         if (this.ttl === 0) {
             this.dead = true;
         }

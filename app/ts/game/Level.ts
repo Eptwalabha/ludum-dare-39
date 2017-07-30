@@ -37,13 +37,24 @@ class Level {
         }
     }
 
-    buildRandom(level: number, rnd: Phaser.RandomDataGenerator) {
+    buildRandom(level: number, rnd: Phaser.RandomDataGenerator, word: CWorld) {
         console.log("building a lvl " + level + " map");
         this.map = [];
+        let tiles: Array<TILE> = [TILE.WALL];
+        let ratio: number = 6;
+        for (var i = 0; i < ratio; ++i) tiles.push(TILE.FLOOR);
+
         for (var i = 0; i < this.height; ++i) {
             this.map[i] = [];
             for (var j = 0; j < this.width; ++j) {
-                this.map[i][j] = rnd.pick([TILE.FLOOR, TILE.FLOOR, TILE.FLOOR, TILE.WALL]);
+                let tile: TILE = rnd.pick(tiles);
+                this.map[i][j] = tile;
+                if (tile === TILE.WALL) {
+                    let box: BoxBody = new BoxBody(i - 0.5, j - 0.5, 1, 1);
+                    box.group = EntityGenerator.COLLISION_MASK.WALL;
+                    box.mask = EntityGenerator.COLLISION_MASK.PLAYER | EntityGenerator.COLLISION_MASK.BULLET;
+                    word.addBody(box);
+                }
             }
         }
     }

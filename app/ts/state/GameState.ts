@@ -24,7 +24,8 @@ class GameState extends Phaser.State {
     private tick_running: boolean = false;
     private tick_acc: number = 0;
     private entity_generator: EntityGenerator;
-    private engine: Matter.Engine;
+    collision_world: CWorld;
+    private score = 0;
 
     init(data) {
         this.data = data;
@@ -35,9 +36,18 @@ class GameState extends Phaser.State {
         this.tick_duration = 150;
         this.entity_generator = new EntityGenerator(this);
         this.entities = [];
-        this.game.rnd.sow([3, 2, 1]);
-        this.game.rnd.integer();
+    }
 
+    create () {
+        this.collision_world = new CWorld();
+        let self = this;
+        this.collision_world.onCollisionStart = function (a: CBody, b: CBody) {
+            self.collisionStart(a, b);
+        };
+        this.level.setDimensions(20, 20);
+        this.level.buildRandom(this.data.level, this.data.level_rnd, this.collision_world);
+
+        this.game.rnd.sow([3, 2, 1]);
         let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
             var x = this.game.rnd.between(0, this.level.width - 1);
@@ -47,15 +57,6 @@ class GameState extends Phaser.State {
         }
     }
 
-    preload () {
-        this.level.setDimensions(20, 20);
-        this.level.buildRandom(this.data.level, this.data.level_rnd);
-        this.engine = Matter.Engine.create();
-    }
-
-    create () {
-    }
-
     update() {
 
         if (!this.tick_running && this.checkPlayerMove()) {
@@ -63,7 +64,7 @@ class GameState extends Phaser.State {
         }
         this.updateLevel(this.game.time.elapsedMS);
         this.updateEntities(this.game.time.elapsedMS);
-        Matter.Engine.update(this.engine, this.game.time.elapsedMS);
+        this.collision_world.run();
         this.cleanDeadEntities();
     }
 
@@ -156,7 +157,17 @@ class GameState extends Phaser.State {
             }
         });
         to_remove.reverse().forEach(function (index) {
+            if (self.entities[index])
             self.entities.splice(index, 1);
         });
+    }
+
+    private collisionStart (bodyA: CBody, bodyB: CBody) {
+        if (bodyA.entity instanceof TBBullet) {
+            this.collision_world.removeBody(bodyA);
+        }
+        if (bodyB.entity instanceof TBBullet) {
+            this.collision_world.removeBody(bodyB);
+        }
     }
 }

@@ -9,11 +9,9 @@
   "author": "eptwalabha (https://github.com/eptwalabha)",
   "license": "MIT",
   "dependencies": {
-    "matter-js": "^0.13.0",
     "phaser-ce": "^2.8.3"
   },
   "devDependencies": {
-    "@types/matter-js": "^0.9.32",
     "del": "^3.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-clean-css": "^3.6.0",
