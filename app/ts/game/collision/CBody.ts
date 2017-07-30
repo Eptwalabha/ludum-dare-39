@@ -13,6 +13,7 @@ abstract class CBody {
     mask: number;
     group: number;
     entity: any;
+    quads: Array<number>;
 
     constructor (x: number, y: number, type: CBODY_TYPE) {
         this.x = x;
@@ -21,6 +22,7 @@ abstract class CBody {
         this.mask = 0x0000;
         this.group = 0x0000;
         this.entity = null;
+        this.quads = [];
     }
 
     moveTo (x: number, y: number) {
@@ -30,4 +32,6 @@ abstract class CBody {
             this.world.updatePosition(this);
         }
     }
+
+    abstract getBoundingBox(): BBox;
 }

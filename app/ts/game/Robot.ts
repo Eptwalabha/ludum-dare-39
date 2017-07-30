@@ -5,11 +5,15 @@ class Robot extends TurnBasedGameEntity {
     private destination: Phaser.Point;
     private power_loss_rate = 3;
 
-    constructor(x: number, y: number) {
-        super(x, y, '#00ff00');
+    constructor(x: number, y: number, world: CWorld) {
+        super(x, y, '#00ff00', .9);
         this.origin = new Phaser.Point(x, y);
         this.destination = new Phaser.Point(x, y);
         this.power = 100;
+        this.body = new CircleBody(x, y, .4);
+        this.body.group = EntityGenerator.COLLISION_MASK.PLAYER;
+        this.body.mask = EntityGenerator.COLLISION_MASK.WALL | EntityGenerator.COLLISION_MASK.BULLET;
+        world.addBody(this.body);
     }
 
     beginTick(): void {
@@ -19,11 +23,15 @@ class Robot extends TurnBasedGameEntity {
     updateTick(ts: number, percent: number): void {
         this.position.x = this.origin.x + (this.destination.x - this.origin.x) * percent;
         this.position.y = this.origin.y + (this.destination.y - this.origin.y) * percent;
+        this.body.x = this.position.x;
+        this.body.y = this.position.y;
     }
 
     endTick(): void {
         this.destination.clone(this.position);
         this.destination.clone(this.origin);
+        this.body.x = this.position.x;
+        this.body.y = this.position.y;
     }
 
     update(ts: number): void {

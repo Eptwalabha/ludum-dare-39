@@ -22,5 +22,9 @@ class Bullet extends GameEntity {
         this.ttl -= ts;
         this.position.x += this.normal.x * (ts / 1000) * this.speed;
         this.position.y += this.normal.y * (ts / 1000) * this.speed;
+        if (this.body) {
+            this.body.x = this.position.x;
+            this.body.y = this.position.y;
+        }
     }
 }

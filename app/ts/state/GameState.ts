@@ -26,12 +26,12 @@ class GameState extends Phaser.State {
     private entity_generator: EntityGenerator;
     collision_world: CWorld;
     private score = 0;
+    private graphics: Phaser.Graphics;
 
     init(data) {
         this.data = data;
         this.mobile_entites = this.game.add.group();
         this.tiles = this.game.add.group();
-        this.robot = new Robot(10, 10);
         this.level = new Level(20, 20);
         this.tick_duration = 150;
         this.entity_generator = new EntityGenerator(this);
@@ -40,6 +40,7 @@ class GameState extends Phaser.State {
 
     create () {
         this.collision_world = new CWorld();
+        this.robot = new Robot(10, 10, this.collision_world);
         let self = this;
         this.collision_world.onCollisionStart = function (a: CBody, b: CBody) {
             self.collisionStart(a, b);
@@ -55,6 +56,7 @@ class GameState extends Phaser.State {
             var foe: Foe = new Foe(x, y, this.entity_generator);
             this.entities.push(foe);
         }
+        this.graphics = this.game.add.graphics(0, 0);
     }
 
     update() {
@@ -69,13 +71,15 @@ class GameState extends Phaser.State {
     }
 
     render () {
-        this.level.debug(this.game, this.zoom);
-
-        this.robot.debug(this.game, this.zoom);
-        var self = this;
-        this.entities.forEach(function(entity) {
-            entity.debug(self.game, self.zoom);
-        });
+        // this.level.debug(this.game, this.zoom);
+        //
+        // this.robot.debug(this.game, this.zoom);
+        // var self = this;
+        // this.entities.forEach(function(entity) {
+        //     entity.debug(self.game, self.zoom);
+        // });
+        this.graphics.clear();
+        this.collision_world.debug(this.graphics, this.zoom);
     }
 
     checkPlayerMove () {
@@ -157,17 +161,21 @@ class GameState extends Phaser.State {
             }
         });
         to_remove.reverse().forEach(function (index) {
-            if (self.entities[index])
-            self.entities.splice(index, 1);
+            if (self.entities[index]) {
+                if (self.entities[index].body) {
+                    self.collision_world.removeBody(self.entities[index].body);
+                }
+                self.entities.splice(index, 1);
+            }
         });
     }
 
     private collisionStart (bodyA: CBody, bodyB: CBody) {
-        if (bodyA.entity instanceof TBBullet) {
-            this.collision_world.removeBody(bodyA);
+        if (bodyA.entity instanceof Bullet || bodyA.entity instanceof TBBullet) {
+            bodyA.entity.dead = true;
         }
-        if (bodyB.entity instanceof TBBullet) {
-            this.collision_world.removeBody(bodyB);
+        if (bodyB.entity instanceof Bullet || bodyB.entity instanceof TBBullet) {
+            bodyB.entity.dead = true;
         }
     }
 }

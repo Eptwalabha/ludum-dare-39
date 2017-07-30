@@ -16,6 +16,11 @@ class EntityGenerator {
 
     spawn_bullet (parent: Foe, direction: number, speed: number) {
         var bullet: Bullet = new Bullet(parent, direction, speed, 2000);
+        bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.15);
+        bullet.body.group = EntityGenerator.COLLISION_MASK.BULLET;
+        bullet.body.mask = EntityGenerator.COLLISION_MASK.WALL | EntityGenerator.COLLISION_MASK.PLAYER;
+        bullet.body.entity = bullet;
+        this.game_state.collision_world.addBody(bullet.body);
         this.game_state.addNewEntity(bullet);
     }
 

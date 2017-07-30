@@ -5,11 +5,12 @@ abstract class GameEntity {
     color: string;
     dead: boolean;
     size: number;
+    body: CBody;
 
     constructor (x, y, color, size = 1) {
         this.color = color;
         this.position = new Phaser.Point(x, y);
-        this.circle = new Phaser.Circle(this.position.x, this.position.y, 1);
+        this.circle = new Phaser.Circle(this.position.x, this.position.y, size);
         this.dead = false;
         this.size = size;
     }

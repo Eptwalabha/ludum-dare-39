@@ -11,4 +11,10 @@ class BoxBody extends CBody {
         this.hw = this.width / 2;
         this.hh = this.height / 2;
     }
+
+    getBoundingBox() {
+        return {
+            x: this.x, y: this.y, w: this.width, h: this.height
+        };
+    }
 }
