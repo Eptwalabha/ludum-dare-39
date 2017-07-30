@@ -31,6 +31,7 @@ class GameState extends Phaser.State {
         this.data = data;
         this.tiles = this.game.add.group();
         this.tick_duration = 150;
+        this.game.stage.backgroundColor = "#fff";
     }
 
     create () {

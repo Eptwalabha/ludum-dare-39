@@ -17,6 +17,9 @@ body {
     width: 500px;
 
     & > canvas {
+      &:hover {
+        cursor: none;
+      }
     }
   }
 }

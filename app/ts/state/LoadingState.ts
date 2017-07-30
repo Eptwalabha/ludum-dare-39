@@ -3,9 +3,25 @@ class LoadingState extends Phaser.State {
     preload() {
         this.game.load.image('splash-screen', 'assets/images/splash-screen.png');
         this.game.load.image('menu-background', 'assets/images/menu-background.png');
+        this.game.load.image('menu-selector', 'assets/images/menu-selector.png');
+        this.game.load.image('menu-start', 'assets/images/menu-start.png');
+        this.game.load.image('menu-continue', 'assets/images/menu-continue.png');
+        this.game.load.image('menu-levels', 'assets/images/menu-levels.png');
+        this.game.load.image('menu-robot', 'assets/images/menu-robot.png');
+        this.game.load.image('menu-title', 'assets/images/menu-title.png');
+        this.game.load.image('menu-floor', 'assets/images/menu-floor.png');
+        this.game.load.image('bg-bulb', 'assets/images/bg-bulb.png');
+        this.game.load.image('bg-battery', 'assets/images/bg-battery.png');
+        this.game.load.image('bg-accu', 'assets/images/bg-accu.png');
+        this.game.load.image('ld39', 'assets/images/ld39.png');
         this.game.load.image('robot', 'assets/images/robot.png');
         this.game.load.image('tile-floor', 'assets/images/to-do.png');
         this.game.load.image('tile-wall', 'assets/images/to-do.png');
+    }
+
+
+    loadUpdate() {
+        console.log("loadUpdate");
     }
 
     create() {
