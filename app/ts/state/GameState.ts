@@ -117,14 +117,14 @@ class GameState extends Phaser.State {
         var layouts: ILayouts = this.game.cache.getJSON('layouts');
         var levels: ILevels = this.game.cache.getJSON('levels');
         this.level = new Level();
-        if (this.data.level > levels.levels.length) {
-            this.randomLevel();
-        } else {
+        if (this.data.level < levels.levels.length) {
             var level_spec: ILevel = levels.levels[this.data.level];
             var layout: ILayout = layouts[level_spec.layout];
             this.level.buildFromSpec(level_spec, layout, this);
             this.buildFoes(level_spec);
             this.buildItems(level_spec);
+        } else {
+            this.randomLevel();
         }
     }
 

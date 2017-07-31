@@ -72,7 +72,7 @@ class Level {
 
     debug(graphics: Phaser.Graphics, scale: number) {
         graphics.beginFill(0xdddddd);
-        graphics.drawRect(0, 0, this.width * scale - scale/2, this.height * scale - scale /2);
+        graphics.drawRect(-scale / 2, -scale / 2, this.width * scale, this.height * scale);
         graphics.endFill();
         graphics.lineStyle(1, 0xcccccc, 1);
         for (var y = 0; y < this.height; ++y) {
