@@ -88,6 +88,46 @@
       ]
     },
     {
+      "name": "I don't feel good",
+      "layout": "skull",
+      "foes": [
+        {
+          "type": "tb-spat",
+          "position": { "x": 4, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        },
+        {
+          "type": "tb-spat",
+          "position": { "x": 9, "y": 8 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5,
+            "offset": 500
+          }
+        }
+      ],
+      "items": [
+        {
+          "type": "energy",
+          "options": { "amount": 100 },
+          "position": { "x": 1, "y": 3 }
+        },
+        {
+          "type": "energy",
+          "options": { "amount": 50 },
+          "position": { "x": 1, "y": 7 }
+        },
+        {
+          "type": "energy",
+          "options": { "amount": 25 },
+          "position": { "x": 1, "y": 5 }
+        }
+      ]
+    },
+    {
       "name": "first enemy",
       "layout": "tuto-5",
       "foes": []

@@ -3,9 +3,10 @@ interface ILevels {
 }
 
 interface ILevel {
-    name?: string,
     layout: string,
+    name?: string,
     sprite_sheet?: string,
+    power_loss?: number;
     items?: Array<IItem>,
     foes?: Array<IFoe>,
     start?: { x: number, y: number },
@@ -43,12 +44,14 @@ class Level {
     private start_point: Phaser.Point;
     private exit_point: Phaser.Point;
     private name: string;
+    power_loss_rate: number;
 
     constructor() {
         this.width = 10;
         this.height = 10;
         this.name = "no level name";
         this.reset();
+        this.power_loss_rate = 5;
     }
 
     private reset () {
@@ -67,17 +70,25 @@ class Level {
 
     }
 
-    debug(game: Phaser.Game, scale: number) {
-        for (var i = 0; i < this.height; ++i) {
-            for (var j = 0; j < this.width; ++j) {
-                var floor = new Phaser.Rectangle(i * scale - scale/2, j * scale - scale/2, scale, scale);
-                if (this.map[i][j] === TILE.FLOOR) {
-                    game.debug.geom(floor, '#9bb9ef');
-                } else {
-                    game.debug.geom(floor, '#0011ff');
-                }
+    debug(graphics: Phaser.Graphics, scale: number) {
+        graphics.beginFill(0xdddddd);
+        graphics.drawRect(0, 0, this.width * scale - scale/2, this.height * scale - scale /2);
+        graphics.endFill();
+        graphics.lineStyle(1, 0xcccccc, 1);
+        for (var y = 0; y < this.height; ++y) {
+            for (var x = 0; x < this.width; ++x) {
+                graphics.drawRect(x * scale - scale/2, y * scale - scale/2, scale, scale);
             }
         }
+        for (var y = 0; y < this.height; ++y) {
+            for (var x = 0; x < this.width; ++x) {
+                if (this.map[y][x] !== TILE.WALL) continue;
+                graphics.beginFill(0x000000);
+                graphics.drawRect(x * scale - scale/2, y * scale - scale/2, scale, scale);
+                graphics.endFill();
+            }
+        }
+        graphics.lineStyle(1, 0x000000, 1);
     }
 
     buildRandom(width: number, height: number, rnd: Phaser.RandomDataGenerator, state: GameState) {
@@ -110,6 +121,7 @@ class Level {
     }
 
     buildFromSpec (spec: ILevel, layout: ILayout, state: GameState) {
+        if (spec.power_loss) this.power_loss_rate = spec.power_loss;
         this.width = layout.layout[0].length;
         this.height = layout.layout.length;
         this.name = spec.name ? spec.name : "unicorn";

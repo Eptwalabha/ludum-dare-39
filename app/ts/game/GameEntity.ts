@@ -1,17 +1,15 @@
 abstract class GameEntity {
 
     position: Phaser.Point;
-    circle: Phaser.Circle;
-    color: string;
+    angle: number;
     dead: boolean;
     size: number;
     body: CBody;
     state: GameState;
 
-    constructor (x, y, color, size = 1, state: GameState) {
-        this.color = color;
+    constructor (x, y, angle: number, size = 1, state: GameState) {
+        this.angle = angle;
         this.position = new Phaser.Point(x, y);
-        this.circle = new Phaser.Circle(this.position.x, this.position.y, size);
         this.dead = false;
         this.size = size;
         this.state = state;
@@ -23,11 +21,9 @@ abstract class GameEntity {
 
     abstract update(ts: number);
 
-    debug (game: Phaser.Game, scale: number) {
-        this.circle.x = this.position.x * scale;
-        this.circle.y = this.position.y * scale;
-        this.circle.diameter = scale * this.size;
-        game.debug.geom(this.circle, this.color);
+    debug (graphics: Phaser.Graphics, scale: number) {
+        graphics.lineStyle(1, 0x555555, 1);
+        graphics.drawCircle(this.position.x * scale, this.position.y * scale, this.size * scale);
     }
 
     interactWith (entity: GameEntity): void {

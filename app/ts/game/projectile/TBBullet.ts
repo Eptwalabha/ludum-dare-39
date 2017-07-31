@@ -7,7 +7,7 @@ class TBBullet extends TurnBasedGameEntity {
     destination: Phaser.Point;
 
     constructor (parent: GameEntity, direction: number, distance: number, ttl: number, state: GameState) {
-        super(parent.position.x, parent.position.y, '#cccccc', 0.4, state);
+        super(parent.position.x, parent.position.y, 0, 0.4, state);
         this.ttl = ttl;
 
         this.normal = new Phaser.Point(
@@ -44,6 +44,10 @@ class TBBullet extends TurnBasedGameEntity {
     }
 
     interactWith (entity: GameEntity) {
+        if (entity instanceof Robot) {
+            entity.dealDamage(entity.power, 0);
+            this.dead = true;
+        }
         if (entity instanceof Wall) {
             this.dead = true;
         }

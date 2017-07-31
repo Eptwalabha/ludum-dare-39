@@ -1,12 +1,13 @@
 class Robot extends TurnBasedGameEntity {
     power: number;
+    cooldown: number = 0;
     position: Phaser.Point;
     private origin: Phaser.Point;
     private destination: Phaser.Point;
-    private power_loss_rate = 10;
+    power_loss_rate = 10;
 
-    constructor(start: Phaser.Point, world: CWorld, state: GameState) {
-        super(start.x, start.y, '#00ff00', .9, state);
+    constructor(start: Phaser.Point, state: GameState) {
+        super(start.x, start.y, 0, .9, state);
         this.origin = new Phaser.Point(start.x, start.y);
         this.destination = new Phaser.Point(start.x, start.y);
         this.power = 100;
@@ -14,7 +15,7 @@ class Robot extends TurnBasedGameEntity {
         this.body.group = MASK.PLAYER;
         this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM | MASK.EXIT_LEVEL;
         this.body.entity = this;
-        world.addBody(this.body);
+        state.collision_engine.addBody(this.body);
     }
 
     beginTick(): void {
@@ -34,9 +35,24 @@ class Robot extends TurnBasedGameEntity {
     }
 
     update(ts: number): void {
-        if (this.power > 10) {
-            this.power -= this.power_loss_rate * (ts / 1000);
+        this.power -= this.power_loss_rate * (ts / 1000);
+        if (this.cooldown > 0) {
+            this.cooldown -= ts;
         }
+    }
+
+    dealDamage (amount: number, cooldown: number) {
+        if (this.cooldown <= 0) {
+            this.power -= amount;
+            this.state.playerHit(amount);
+            this.cooldown = cooldown;
+        }
+    }
+
+    heal (amount: number) {
+        this.power += amount;
+        this.state.playerHealed(amount);
+        if (this.power > 100) this.power = 100;
     }
 
     move(direction: MOVE, level: Level) {
@@ -61,37 +77,15 @@ class Robot extends TurnBasedGameEntity {
         return level.getTileNatureAt(this.destination) === TILE.FLOOR;
     }
 
-    debug (game: Phaser.Game, scale: number) {
-        super.debug(game, scale);
-
-        game.debug.rectangle(
-            new Phaser.Rectangle(
-                this.position.x * scale - 11,
-                this.position.y * scale - 12,
-                22,
-                6),
-            '#000000', true
-        );
-        game.debug.rectangle(
-            new Phaser.Rectangle(
-                this.position.x * scale - 10,
-                this.position.y * scale - 11,
-                20 * this.power / 100,
-                4
-            ),
-            '#00ff00', true
-        );
+    debug (graphics: Phaser.Graphics, scale: number) {
+        if (this.cooldown > 0) {
+            graphics.lineStyle(1, 0xff5555, 1);
+            graphics.drawCircle(this.position.x * scale, this.position.y * scale, this.size * scale);
+        } else {
+            super.debug(graphics, scale);
+        }
     }
 
     interactWith (entity: GameEntity) {
-        if (entity instanceof PowerItem) {
-            this.power += entity.amount;
-            if (this.power > 100) this.power = 100;
-        }
-        if (entity instanceof Bullet || entity instanceof TBBullet) {
-            this.power = 0;
-            // if (this.power <= 10) this.power = 10;
-            entity.dead = true;
-        }
     }
 }

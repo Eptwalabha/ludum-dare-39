@@ -6,7 +6,7 @@ class Bullet extends GameEntity {
     parent: GameEntity;
 
     constructor(parent: GameEntity, direction: number, speed: number, ttl: number, state: GameState) {
-        super(parent.position.x, parent.position.y, '#000000', 0.3, state);
+        super(parent.position.x, parent.position.y, 0, 0.3, state);
         this.speed = speed;
         this.ttl = ttl;
         var x = Math.cos(direction);
@@ -28,6 +28,10 @@ class Bullet extends GameEntity {
     }
 
     interactWith (entity: GameEntity) {
+        if (entity instanceof Robot) {
+            entity.dealDamage(25, 100);
+            this.dead = true;
+        }
         if (entity instanceof Wall) {
             this.dead = true;
         }

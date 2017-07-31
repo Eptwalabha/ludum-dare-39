@@ -1,7 +1,7 @@
 class ExitItem extends GameEntity {
 
     constructor (x: number, y: number, state: GameState) {
-        super(x, y, '#eae83f', 0.2, state);
+        super(x, y, 0, 0.2, state);
     }
 
     update(ts: number) {

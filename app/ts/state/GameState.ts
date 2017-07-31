@@ -30,6 +30,7 @@ class GameState extends Phaser.State {
 
     private ui: Phaser.Group;
     private power: Phaser.Sprite;
+    private shake_camera = 0;
 
     init(data) {
         this.data = data;
@@ -73,7 +74,7 @@ class GameState extends Phaser.State {
             fill: '#ccc',
             fontWeight: 'bold'
         };
-        var text = this.game.add.text(250, 24, "Lvl: " + this.level.getName(), text_style, this.ui);
+        var text = this.game.add.text(250, 24, this.level.getName(), text_style, this.ui);
         var battery = this.game.add.sprite(32, 32, "ui-battery");
         battery.anchor.set(0.5, 0.5);
         this.power = this.game.add.sprite(64, 32, "ui-power");
@@ -87,6 +88,7 @@ class GameState extends Phaser.State {
 
     update() {
 
+        this.cameraEffect(this.game.time.elapsedMS);
         if (!this.tick_running && this.checkPlayerMove()) {
             this.tickBegins();
         }
@@ -101,14 +103,14 @@ class GameState extends Phaser.State {
     }
 
     render () {
-        // this.level.debug(this.game, this.zoom);
-        this.robot.debug(this.game, this.zoom);
+        this.graphics.clear();
+        this.level.debug(this.graphics, this.zoom);
+        this.robot.debug(this.graphics, this.zoom);
         var self = this;
         this.entities.forEach(function(entity) {
-            entity.debug(self.game, self.zoom);
+            entity.debug(self.graphics, self.zoom);
         });
-        this.graphics.clear();
-        this.collision_engine.debug(this.graphics, this.zoom);
+        // this.collision_engine.debug(this.graphics, this.zoom);
     }
 
     private buildLevel() {
@@ -142,8 +144,7 @@ class GameState extends Phaser.State {
                 ok = this.level.getTileNatureAt(p) === TILE.FLOOR;
             } while (!ok && fail >= 0);
             if (ok) {
-                var foe: Foe = new Foe(p.x, p.y, this.entity_factory, this);
-                this.entities.push(foe);
+                this.entity_factory.spawnFoe(p.x, p.y, "");
             }
         }
         let nbr_power = 10;
@@ -158,14 +159,15 @@ class GameState extends Phaser.State {
                 ok = this.level.getTileNatureAt(p) === TILE.FLOOR;
             } while (!ok && fail >= 0);
             if (ok) {
-                this.entity_factory.spawn_power_item(p.x, p.y, 50);
+                this.entity_factory.spawnPowerItem(p.x, p.y, 50);
             }
         }
     }
 
     private buildRobot() {
         var start = this.level.getStartPoint();
-        this.robot = new Robot(start, this.collision_engine, this);
+        this.robot = new Robot(start, this);
+        this.robot.power_loss_rate = this.level.power_loss_rate;
     }
 
     private buildFoes (level_spec: ILevel) {
@@ -309,5 +311,40 @@ class GameState extends Phaser.State {
         this.camera.onFadeComplete.add(function () {
             this.game.state.start('game', true, false, game_data);
         }, this);
+    }
+
+    playerHit(amount: number) {
+        this.shake_camera = 200;
+        this.spawnText("-" + amount, '#ff0000', 1);
+    }
+
+    playerHealed (amount: number) {
+        this.spawnText("+" + amount, '#00ff00', -1);
+    }
+
+    spawnText (text, color, to_y) {
+        var text_style = {
+            font: "8px Consolas",
+            fill: color,
+            fontWeight: 'bold'
+        };
+        var x = this.robot.position.x * this.zoom;
+        var y = this.robot.position.y * this.zoom;
+        var stext = this.game.add.text(x, y, text, text_style, this.group);
+        stext.anchor.set(0.5, 1);
+        this.game.add.tween(stext)
+            .to({y: y + to_y * this.zoom}, 500, Phaser.Easing.Sinusoidal.Out, true)
+            .onComplete.add(function () {
+                stext.destroy();
+            }, this);
+
+    }
+
+    private cameraEffect(elapsedMS: number) {
+        this.graphics.position.set(0, 0);
+        if (this.shake_camera > 0) {
+            this.shake_camera -= elapsedMS;
+            this.graphics.position.add(this.rnd.between(-2, 2), this.rnd.between(-2, 2));
+        }
     }
 }
