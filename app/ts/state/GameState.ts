@@ -22,7 +22,7 @@ class GameState extends Phaser.State {
     private tick_duration: number;
     private tick_running: boolean = false;
     private tick_acc: number = 0;
-    private entity_generator: EntityFactory;
+    private entity_factory: EntityFactory;
     collision_world: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
@@ -38,7 +38,7 @@ class GameState extends Phaser.State {
         this.level = new Level(20, 20);
         this.entities = [];
         this.collision_world = new CWorld();
-        this.entity_generator = new EntityFactory(this);
+        this.entity_factory = new EntityFactory(this);
         this.robot = new Robot(10, 10, this.collision_world);
         let self = this;
         this.collision_world.onCollisionStart = function (a: CBody, b: CBody) {
@@ -48,12 +48,36 @@ class GameState extends Phaser.State {
         this.level.buildRandom(this.data.level, this.data.level_rnd, this.collision_world);
 
         this.game.rnd.sow([3, 2, 1]);
-        let nbr_foe = 10;
+        let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
-            var x = this.game.rnd.between(0, this.level.width - 1);
-            var y = this.game.rnd.between(0, this.level.height - 1);
-            var foe: Foe = new Foe(x, y, this.entity_generator);
-            this.entities.push(foe);
+            var p = new Phaser.Point();
+            var fail = 100;
+            var ok = false;
+            do {
+                p.x = this.game.rnd.between(0, this.level.width - 1);
+                p.y = this.game.rnd.between(0, this.level.height - 1);
+                fail--;
+                ok = this.level.getTileNatureAt(p) === TILE.FLOOR;
+            } while (!ok && fail >= 0);
+            if (ok) {
+                var foe: Foe = new Foe(p.x, p.y, this.entity_factory);
+                this.entities.push(foe);
+            }
+        }
+        let nbr_power = 10;
+        for (i = 0; i < nbr_power; ++i) {
+            var p = new Phaser.Point();
+            var fail = 100;
+            var ok = false;
+            do {
+                p.x = this.game.rnd.between(0, this.level.width - 1);
+                p.y = this.game.rnd.between(0, this.level.height - 1);
+                fail--;
+                ok = this.level.getTileNatureAt(p) === TILE.FLOOR;
+            } while (!ok && fail >= 0);
+            if (ok) {
+                this.entity_factory.spawn_power_item(p.x, p.y, 50);
+            }
         }
         this.graphics = this.game.add.graphics(0, 0);
     }
@@ -74,12 +98,11 @@ class GameState extends Phaser.State {
 
     render () {
         // this.level.debug(this.game, this.zoom);
-        //
         this.robot.debug(this.game, this.zoom);
-        // var self = this;
-        // this.entities.forEach(function(entity) {
-        //     entity.debug(self.game, self.zoom);
-        // });
+        var self = this;
+        this.entities.forEach(function(entity) {
+            entity.debug(self.game, self.zoom);
+        });
         this.graphics.clear();
         this.collision_world.debug(this.graphics, this.zoom);
     }
@@ -153,6 +176,9 @@ class GameState extends Phaser.State {
 
     addNewEntity (entity: GameEntity) {
         this.entities.push(entity);
+        if (entity.body) {
+            this.collision_world.addBody(entity.body);
+        }
     }
 
     private cleanDeadEntities() {
@@ -174,11 +200,20 @@ class GameState extends Phaser.State {
     }
 
     private collisionStart (bodyA: CBody, bodyB: CBody) {
-        if (bodyA.entity instanceof Bullet || bodyA.entity instanceof TBBullet) {
-            bodyA.entity.dead = true;
+
+        if (bodyA.entity && !bodyA.entity.dead && bodyB.entity && !bodyB.entity.dead) {
+            bodyA.entity.interactWith(bodyB.entity);
+            bodyB.entity.interactWith(bodyA.entity);
         }
-        if (bodyB.entity instanceof Bullet || bodyB.entity instanceof TBBullet) {
-            bodyB.entity.dead = true;
-        }
+
+        // if (bodyA.entity instanceof PowerItem || bodyB.entity instanceof PowerItem) {
+        //     console.log("yo power");
+        // }
+        // if (bodyA.entity instanceof Bullet || bodyA.entity instanceof TBBullet) {
+        //     bodyA.entity.dead = true;
+        // }
+        // if (bodyB.entity instanceof Bullet || bodyB.entity instanceof TBBullet) {
+        //     bodyB.entity.dead = true;
+        // }
     }
 }

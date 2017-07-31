@@ -14,7 +14,6 @@ class EntityFactory {
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
         bullet.body.entity = bullet;
-        this.world.addBody(bullet.body);
         this.game_state.addNewEntity(bullet);
     }
 
@@ -31,7 +30,6 @@ class EntityFactory {
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
         bullet.body.entity = bullet;
-        this.world.addBody(bullet.body);
         this.game_state.addNewEntity(bullet);
     }
 
@@ -41,4 +39,15 @@ class EntityFactory {
             this.spawn_tb_bullet(parent, angle * i, distance, ttl);
         }
     }
+
+    spawn_power_item (x: number, y: number, amount: number) {
+        var power_item: PowerItem = new PowerItem(x, y, amount);
+        var s = power_item.size;
+        power_item.body = new BoxBody(x - s / 2, y - s / 2, s, s);
+        power_item.body.group = MASK.PICKUP_ITEM;
+        power_item.body.mask = MASK.PLAYER;
+        power_item.body.entity = power_item;
+        this.game_state.addNewEntity(power_item);
+    }
+
 }

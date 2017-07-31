@@ -43,4 +43,9 @@ class TBBullet extends TurnBasedGameEntity {
     update(ts: number) {
     }
 
+    interactWith (entity: GameEntity) {
+        if (entity instanceof Wall) {
+            this.dead = true;
+        }
+    }
 }

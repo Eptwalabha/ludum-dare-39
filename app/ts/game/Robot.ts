@@ -12,7 +12,8 @@ class Robot extends TurnBasedGameEntity {
         this.power = 100;
         this.body = new CircleBody(x, y, .4);
         this.body.group = MASK.PLAYER;
-        this.body.mask = MASK.WALL | MASK.BULLET;
+        this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM;
+        this.body.entity = this;
         world.addBody(this.body);
     }
 
@@ -33,7 +34,9 @@ class Robot extends TurnBasedGameEntity {
     }
 
     update(ts: number): void {
-        this.power -= this.power_loss_rate * (ts / 1000);
+        if (this.power > 10) {
+            this.power -= this.power_loss_rate * (ts / 1000);
+        }
     }
 
     move(direction: MOVE, level: Level) {
@@ -78,5 +81,17 @@ class Robot extends TurnBasedGameEntity {
             ),
             '#00ff00', true
         );
+    }
+
+    interactWith (entity: GameEntity) {
+        if (entity instanceof PowerItem) {
+            this.power += entity.amount;
+            if (this.power > 100) this.power = 100;
+        }
+        if (entity instanceof Bullet || entity instanceof TBBullet) {
+            this.power -= 10;
+            if (this.power <= 10) this.power = 10;
+            entity.dead = true;
+        }
     }
 }

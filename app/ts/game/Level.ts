@@ -80,6 +80,7 @@ class Level {
                     let box: BoxBody = new BoxBody(i - 0.5, j - 0.5, 1, 1);
                     box.group = MASK.WALL;
                     box.mask = MASK.PLAYER | MASK.BULLET;
+                    box.entity = new Wall(i, j);
                     word.addBody(box);
                 }
             }

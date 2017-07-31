@@ -76,6 +76,7 @@ class MenuState extends Phaser.State {
         this.main_menu.position.set(64, 300);
         this.current_menu = 0;
         this.updateSelectorPosition();
+        this.continueGame();
     }
 
     update () {

@@ -13,7 +13,7 @@ class Foe extends TurnBasedGameEntity {
         this.entity_generator = entity_generator;
         this.origin = new Phaser.Point(x, y);
         this.destination = new Phaser.Point(x, y);
-        this.shooting_rate = 500;
+        this.shooting_rate = 1500;
         this.next_shooting = this.shooting_rate;
         this.shooting = 1;
         this.angle = Math.random() * Math.PI * 2;

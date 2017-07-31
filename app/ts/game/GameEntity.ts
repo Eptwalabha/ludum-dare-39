@@ -27,4 +27,7 @@ abstract class GameEntity {
         this.circle.diameter = scale * this.size;
         game.debug.geom(this.circle, this.color);
     }
+
+    interactWith (entity: GameEntity): void {
+    };
 }

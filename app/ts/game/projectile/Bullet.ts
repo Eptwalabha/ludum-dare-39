@@ -26,4 +26,10 @@ class Bullet extends GameEntity {
             this.body.moveTo(this.position.x, this.position.y);
         }
     }
+
+    interactWith (entity: GameEntity) {
+        if (entity instanceof Wall) {
+            this.dead = true;
+        }
+    }
 }
