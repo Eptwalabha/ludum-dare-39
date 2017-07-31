@@ -50,4 +50,40 @@ class EntityFactory {
         this.game_state.addNewEntity(power_item);
     }
 
+    spawnItemFromSpec (spec: IItem) {
+        var position = spec.position;
+        var power = 50;
+        var options = spec.options ? spec.options : {};
+        switch (spec.type) {
+            case "energy":
+                var power: number = options.amount ? options.amount : 50;
+                this.spawn_power_item(position.x, position.y, power);
+                break;
+            default:
+                this.spawn_power_item(position.x, position.y, 50);
+                break;
+        }
+        this.spawn_power_item(position.x, position.y, power);
+    }
+
+    spawnFoeFromSpec (spec: IFoe) {
+        var options = spec.options ? spec.options : [];
+        var position = spec.position;
+        this.spawnFoe(position.x, position.y, spec.type, options);
+    }
+
+    spawnFoe (x: number, y: number, type: string, options: any = []) {
+        var foe: Foe = null;
+        switch (type) {
+            default:
+                foe = this.spawnFoeTBSpat(x, y, options);
+                break;
+        }
+        this.game_state.addNewEntity(foe);
+    }
+
+    private spawnFoeTBSpat (x: number, y: number, options: any): Foe {
+        return new Foe(x, y, this);
+    }
+
 }

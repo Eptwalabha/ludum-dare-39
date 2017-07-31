@@ -17,7 +17,6 @@ class MenuState extends Phaser.State {
     create () {
 
         this.game.stage.backgroundColor = "#fff";
-        this.game.stage.smoothed = false;
         this.camera.flash(0x000000);
 
         this.background1 = this.game.add.group();

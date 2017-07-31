@@ -26,17 +26,13 @@ class GameState extends Phaser.State {
     collision_engine: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
+    private group: Phaser.Group;
 
     init(data) {
         this.data = data;
         this.tick_duration = 150;
-        this.game.stage.backgroundColor = "#fff";
         this.collision_engine = new CWorld();
         this.entity_factory = new EntityFactory(this);
-        let self = this;
-        this.collision_engine.onCollisionStart = function (a: CBody, b: CBody) {
-            self.collisionStart(a, b);
-        };
     }
 
     preload () {
@@ -46,12 +42,22 @@ class GameState extends Phaser.State {
     }
 
     create () {
+        this.game.stage.backgroundColor = "#fff";
         this.camera.flash(0x000000);
+
+        let self = this;
+        this.collision_engine.onCollisionStart = function (a: CBody, b: CBody) {
+            self.collisionStart(a, b);
+        };
         this.entities = [];
         this.buildLevel();
         this.buildRobot();
 
+        this.group = this.game.add.group();
         this.graphics = this.game.add.graphics(0, 0);
+        this.group.add(this.graphics);
+
+        this.group.position.x = 100;
         this.camera.fade(0xffffff, 300);
     }
 
@@ -90,6 +96,8 @@ class GameState extends Phaser.State {
             var level_spec: ILevel = levels.levels[this.data.level];
             var layout: ILayout = layouts[level_spec.layout];
             this.level.buildFromSpec(level_spec, layout, this.collision_engine);
+            this.buildFoes(level_spec);
+            this.buildItems(level_spec);
         }
     }
 
@@ -133,6 +141,20 @@ class GameState extends Phaser.State {
     private buildRobot() {
         var start = this.level.getStartPoint();
         this.robot = new Robot(start, this.collision_engine);
+    }
+
+    private buildFoes (level_spec: ILevel) {
+        var foes: Array<IFoe> = level_spec.foes ? level_spec.foes : [];
+        for (var i = 0; i < foes.length; ++i) {
+            this.entity_factory.spawnFoeFromSpec(foes[i]);
+        }
+    }
+
+    private buildItems (level_spec: ILevel) {
+        var items: Array<IItem> = level_spec.items ? level_spec.items : [];
+        for (var i = 0; i < items.length; ++i) {
+            this.entity_factory.spawnItemFromSpec(items[i]);
+        }
     }
 
     checkPlayerMove () {

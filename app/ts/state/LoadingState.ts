@@ -25,7 +25,7 @@ class LoadingState extends Phaser.State {
     create() {
         // this.game.state.start('game-over');
         // this.game.state.start('menu');
-        this.continueGame(0);
+        this.continueGame(1);
     }
 
     // TODO à virer

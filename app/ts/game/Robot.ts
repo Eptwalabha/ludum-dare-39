@@ -12,7 +12,7 @@ class Robot extends TurnBasedGameEntity {
         this.power = 100;
         this.body = new CircleBody(start.x, start.y, .4);
         this.body.group = MASK.PLAYER;
-        this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM;
+        this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM | MASK.EXIT_LEVEL;
         this.body.entity = this;
         world.addBody(this.body);
     }

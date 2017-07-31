@@ -17,14 +17,15 @@ interface ILayouts {
 }
 
 interface ILayout {
-    layout: Array<Array<number>>,
+    layout: Array<string>,
     start: { x: number, y: number },
     exit: { x: number, y: number }
 }
 
 interface IItem {
     type: string,
-    position: { x: number, y: number }
+    position: { x: number, y: number },
+    options?: any
 }
 
 interface  IFoe {
@@ -112,7 +113,7 @@ class Level {
         for (var y = 0; y < this.height; ++y) {
             this.map[y] = [];
             for (var x = 0; x < this.width; ++x) {
-                this.map[y][x] = layout.layout[y][x] === 1 ? TILE.WALL : TILE.FLOOR;
+                this.map[y][x] = layout.layout[y][x] === "0" ? TILE.WALL : TILE.FLOOR;
             }
         }
         this.start_point.x = spec.start ? spec.start.x : layout.start.x;
@@ -134,6 +135,12 @@ class Level {
                 }
             }
         }
+
+        let exit: BoxBody = new BoxBody(this.exit_point.x - .1, this.exit_point.y - .1, .2, .2);
+        exit.group = MASK.EXIT_LEVEL;
+        exit.mask = MASK.PLAYER;
+        exit.entity = new ExitItem(this.exit_point.x, this.exit_point.y);
+        world.addBody(exit);
     }
 
     setDimensions(width: number, height: number) {
