@@ -92,7 +92,6 @@ class MenuState extends Phaser.State {
         this.main_menu.position.set(64, 300);
         this.current_menu = 0;
         this.updateSelectorPosition();
-        // this.continueGame();
 
         this.camera.fade(0xffffff, 300);
     }
@@ -142,17 +141,17 @@ class MenuState extends Phaser.State {
 
         if (this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
             if (this.current_menu === 0) {
-                this.continueGame();
+                this.continueGame(0);
             } else {
                 this.displayLevels();
             }
         }
     }
 
-    continueGame () {
+    continueGame (level) {
         var game_data = {
-                level: this.level,
-                level_rnd: new Phaser.RandomDataGenerator(this.seeds)
+                level: level,
+                level_seeds: this.seeds
             };
         this.game.state.start('game', true, false, game_data);
     }

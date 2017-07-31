@@ -1,16 +1,25 @@
+interface ILevels {
+    levels: Array<ILevel>
+}
+
 interface ILevel {
+    name?: string,
     layout: string,
     sprite_sheet?: string,
     items?: Array<IItem>,
     foes?: Array<IFoe>,
     start?: { x: number, y: number },
-    end?: { x: number, y: number }
+    exit?: { x: number, y: number }
 }
 
-interface IRoomLayout {
-    layer: Array<Array<number>>,
+interface ILayouts {
+    [key: string] : ILayout
+}
+
+interface ILayout {
+    layout: Array<Array<number>>,
     start: { x: number, y: number },
-    end: { x: number, y: number }
+    exit: { x: number, y: number }
 }
 
 interface IItem {
@@ -30,14 +39,18 @@ class Level {
     private map: Array<Array<TILE>>;
     width: number;
     height: number;
+    private start_point: Phaser.Point;
+    private exit_point: Phaser.Point;
 
-    constructor(width: number, height: number) {
-        this.width = width;
-        this.height = height;
+    constructor() {
+        this.width = 10;
+        this.height = 10;
         this.reset();
     }
 
     private reset () {
+        this.start_point = new Phaser.Point();
+        this.exit_point = new Phaser.Point();
         this.map = [];
         for (var i = 0; i < this.height; ++i) {
             this.map[i] = [];
@@ -64,8 +77,8 @@ class Level {
         }
     }
 
-    buildRandom(level: number, rnd: Phaser.RandomDataGenerator, word: CWorld) {
-        console.log("building a lvl " + level + " map");
+    buildRandom(width: number, height: number, rnd: Phaser.RandomDataGenerator, world: CWorld) {
+        this.setDimensions(width, height);
         this.map = [];
         let tiles: Array<TILE> = [TILE.WALL];
         let ratio: number = 6;
@@ -74,14 +87,50 @@ class Level {
         for (var i = 0; i < this.height; ++i) {
             this.map[i] = [];
             for (var j = 0; j < this.width; ++j) {
-                let tile: TILE = rnd.pick(tiles);
-                this.map[i][j] = tile;
-                if (tile === TILE.WALL) {
-                    let box: BoxBody = new BoxBody(i - 0.5, j - 0.5, 1, 1);
+                this.map[i][j] = rnd.pick(tiles);
+            }
+        }
+        var position_set = false;
+        var max = width * height;
+        var attempt = 0;
+        var pos = new Phaser.Point();
+        do {
+            pos.x = rnd.between(0, width);
+            pos.y = rnd.between(0, height);
+            position_set = this.getTileNatureAt(pos) === TILE.FLOOR;
+            attempt++
+        } while (!position_set || attempt < max);
+        pos.clone(this.start_point);
+
+        this.buildLevelCollision(world);
+    }
+
+    buildFromSpec (spec: ILevel, layout: ILayout, world: CWorld) {
+        this.width = layout.layout[0].length;
+        this.height = layout.layout.length;
+        this.map = [];
+        for (var y = 0; y < this.height; ++y) {
+            this.map[y] = [];
+            for (var x = 0; x < this.width; ++x) {
+                this.map[y][x] = layout.layout[y][x] === 1 ? TILE.WALL : TILE.FLOOR;
+            }
+        }
+        this.start_point.x = spec.start ? spec.start.x : layout.start.x;
+        this.start_point.y = spec.start ? spec.start.y : layout.start.y;
+        this.exit_point.x = spec.exit ? spec.exit.x : layout.exit.x;
+        this.exit_point.y = spec.exit ? spec.exit.y : layout.exit.y;
+        this.buildLevelCollision(world);
+    }
+
+    private buildLevelCollision (world: CWorld) {
+        for (var y = 0; y < this.height; ++y) {
+            for (var x = 0; x < this.width; ++x) {
+                if (this.map[y][x] === TILE.WALL) {
+                    let box: BoxBody = new BoxBody(x - 0.5, y - 0.5, 1, 1);
                     box.group = MASK.WALL;
                     box.mask = MASK.PLAYER | MASK.BULLET;
-                    box.entity = new Wall(i, j);
-                    word.addBody(box);
+                    box.entity = new Wall(x, y);
+                    world.addBody(box);
                 }
             }
         }
@@ -94,9 +143,13 @@ class Level {
 
     getTileNatureAt(destination: Phaser.Point) {
         try {
-            return this.map[destination.x][destination.y];
+            return this.map[destination.y][destination.x];
         } catch (e) {
             return null;
         }
+    }
+
+    getStartPoint() {
+        return this.start_point;
     }
 }

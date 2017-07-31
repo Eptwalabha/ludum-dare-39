@@ -1,0 +1,18 @@
+{
+  "levels": [
+    {
+      "name": "first empty room",
+      "layout": "tuto-1"
+    },
+    {
+      "name": "first enemy",
+      "layout": "tuto-1",
+      "foes": []
+    },
+    {
+      "name": "first enemy",
+      "layout": "tuto-2",
+      "foes": []
+    }
+  ]
+}

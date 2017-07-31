@@ -23,32 +23,79 @@ class GameState extends Phaser.State {
     private tick_running: boolean = false;
     private tick_acc: number = 0;
     private entity_factory: EntityFactory;
-    collision_world: CWorld;
+    collision_engine: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
 
     init(data) {
         this.data = data;
-        this.tiles = this.game.add.group();
         this.tick_duration = 150;
         this.game.stage.backgroundColor = "#fff";
+        this.collision_engine = new CWorld();
+        this.entity_factory = new EntityFactory(this);
+        let self = this;
+        this.collision_engine.onCollisionStart = function (a: CBody, b: CBody) {
+            self.collisionStart(a, b);
+        };
+    }
+
+    preload () {
+        this.game.load.json('messages', 'assets/json/messages.json');
+        this.game.load.json('layouts', 'assets/json/layouts.json');
+        this.game.load.json('levels', 'assets/json/levels.json');
     }
 
     create () {
         this.camera.flash(0x000000);
-        this.camera.fade(0xffffff, 300);
-        this.level = new Level(20, 20);
         this.entities = [];
-        this.collision_world = new CWorld();
-        this.entity_factory = new EntityFactory(this);
-        this.robot = new Robot(10, 10, this.collision_world);
-        let self = this;
-        this.collision_world.onCollisionStart = function (a: CBody, b: CBody) {
-            self.collisionStart(a, b);
-        };
-        this.level.setDimensions(20, 20);
-        this.level.buildRandom(this.data.level, this.data.level_rnd, this.collision_world);
+        this.buildLevel();
+        this.buildRobot();
 
+        this.graphics = this.game.add.graphics(0, 0);
+        this.camera.fade(0xffffff, 300);
+    }
+
+    update() {
+
+        if (!this.tick_running && this.checkPlayerMove()) {
+            this.tickBegins();
+        }
+        this.updateLevel(this.game.time.elapsedMS);
+        this.updateEntities(this.game.time.elapsedMS);
+        this.collision_engine.run();
+        this.cleanDeadEntities();
+        if (this.robot.power <= 0) {
+            this.gameOver();
+        }
+    }
+
+    render () {
+        // this.level.debug(this.game, this.zoom);
+        this.robot.debug(this.game, this.zoom);
+        var self = this;
+        this.entities.forEach(function(entity) {
+            entity.debug(self.game, self.zoom);
+        });
+        this.graphics.clear();
+        this.collision_engine.debug(this.graphics, this.zoom);
+    }
+
+    private buildLevel() {
+        var layouts: ILayouts = this.game.cache.getJSON('layouts');
+        var levels: ILevels = this.game.cache.getJSON('levels');
+        this.level = new Level();
+        if (this.data.level > levels.levels.length) {
+            this.randomLevel();
+        } else {
+            var level_spec: ILevel = levels.levels[this.data.level];
+            var layout: ILayout = layouts[level_spec.layout];
+            this.level.buildFromSpec(level_spec, layout, this.collision_engine);
+        }
+    }
+
+    private randomLevel () {
+        var rnd = new Phaser.RandomDataGenerator(this.data.level_seeds);
+        this.level.buildRandom(20, 20, rnd, this.collision_engine);
         this.game.rnd.sow([3, 2, 1]);
         let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
@@ -81,32 +128,11 @@ class GameState extends Phaser.State {
                 this.entity_factory.spawn_power_item(p.x, p.y, 50);
             }
         }
-        this.graphics = this.game.add.graphics(0, 0);
     }
 
-    update() {
-
-        if (!this.tick_running && this.checkPlayerMove()) {
-            this.tickBegins();
-        }
-        this.updateLevel(this.game.time.elapsedMS);
-        this.updateEntities(this.game.time.elapsedMS);
-        this.collision_world.run();
-        this.cleanDeadEntities();
-        if (this.robot.power <= 0) {
-            this.gameOver();
-        }
-    }
-
-    render () {
-        // this.level.debug(this.game, this.zoom);
-        this.robot.debug(this.game, this.zoom);
-        var self = this;
-        this.entities.forEach(function(entity) {
-            entity.debug(self.game, self.zoom);
-        });
-        this.graphics.clear();
-        this.collision_world.debug(this.graphics, this.zoom);
+    private buildRobot() {
+        var start = this.level.getStartPoint();
+        this.robot = new Robot(start, this.collision_engine);
     }
 
     checkPlayerMove () {
@@ -179,7 +205,7 @@ class GameState extends Phaser.State {
     addNewEntity (entity: GameEntity) {
         this.entities.push(entity);
         if (entity.body) {
-            this.collision_world.addBody(entity.body);
+            this.collision_engine.addBody(entity.body);
         }
     }
 
@@ -194,7 +220,7 @@ class GameState extends Phaser.State {
         to_remove.reverse().forEach(function (index) {
             if (self.entities[index]) {
                 if (self.entities[index].body) {
-                    self.collision_world.removeBody(self.entities[index].body);
+                    self.collision_engine.removeBody(self.entities[index].body);
                 }
                 self.entities.splice(index, 1);
             }

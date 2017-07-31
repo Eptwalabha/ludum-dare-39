@@ -5,7 +5,7 @@ class EntityFactory {
 
     constructor (game_state: GameState) {
         this.game_state = game_state;
-        this.world = this.game_state.collision_world;
+        this.world = this.game_state.collision_engine;
     }
 
     spawn_bullet (parent: Foe, direction: number, speed: number, ttlMS: number = 2000) {

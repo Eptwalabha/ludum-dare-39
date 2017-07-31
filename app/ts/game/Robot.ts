@@ -5,12 +5,12 @@ class Robot extends TurnBasedGameEntity {
     private destination: Phaser.Point;
     private power_loss_rate = 10;
 
-    constructor(x: number, y: number, world: CWorld) {
-        super(x, y, '#00ff00', .9);
-        this.origin = new Phaser.Point(x, y);
-        this.destination = new Phaser.Point(x, y);
+    constructor(start: Phaser.Point, world: CWorld) {
+        super(start.x, start.y, '#00ff00', .9);
+        this.origin = new Phaser.Point(start.x, start.y);
+        this.destination = new Phaser.Point(start.x, start.y);
         this.power = 100;
-        this.body = new CircleBody(x, y, .4);
+        this.body = new CircleBody(start.x, start.y, .4);
         this.body.group = MASK.PLAYER;
         this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM;
         this.body.entity = this;
