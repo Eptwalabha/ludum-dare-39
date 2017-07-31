@@ -141,18 +141,17 @@ class CWorld {
                 graphics.drawRect(body.x * scale, body.y * scale, body.width * scale, body.height * scale);
             }
         }
-
-        graphics.lineStyle(1, 0xaa0000, 1);
-        for (var i = 0; i < this.quads.length; ++i) {
-            var x = (i % this.quad_def.grid.x) * this.quad_def.cell_dimensions.x + this.quad_def.position.x;
-            var y = Math.floor((i / this.quad_def.grid.x)) * this.quad_def.cell_dimensions.y + this.quad_def.position.y;
-            graphics.drawRect(
-                x * scale,
-                y * scale,
-                this.quad_def.cell_dimensions.x * scale,
-                this.quad_def.cell_dimensions.x * scale
-            );
-        }
+        // graphics.lineStyle(1, 0xaa0000, 1);
+        // for (var i = 0; i < this.quads.length; ++i) {
+        //     var x = (i % this.quad_def.grid.x) * this.quad_def.cell_dimensions.x + this.quad_def.position.x;
+        //     var y = Math.floor((i / this.quad_def.grid.x)) * this.quad_def.cell_dimensions.y + this.quad_def.position.y;
+        //     graphics.drawRect(
+        //         x * scale,
+        //         y * scale,
+        //         this.quad_def.cell_dimensions.x * scale,
+        //         this.quad_def.cell_dimensions.x * scale
+        //     );
+        // }
     }
 
     run () {

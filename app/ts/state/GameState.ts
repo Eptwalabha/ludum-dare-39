@@ -26,9 +26,10 @@ class GameState extends Phaser.State {
     collision_engine: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
-
     private group: Phaser.Group;
+
     private ui: Phaser.Group;
+    private power: Phaser.Sprite;
 
     init(data) {
         this.data = data;
@@ -41,6 +42,9 @@ class GameState extends Phaser.State {
         this.game.load.json('messages', 'assets/json/messages.json');
         this.game.load.json('layouts', 'assets/json/layouts.json');
         this.game.load.json('levels', 'assets/json/levels.json');
+
+        this.game.load.image('ui-battery', 'assets/images/ui-battery.png');
+        this.game.load.image('ui-power', 'assets/images/ui-power.png');
     }
 
     create () {
@@ -62,6 +66,22 @@ class GameState extends Phaser.State {
         var offset_x = (500 - this.level.width * this.zoom) / 2 + .5 * this.zoom;
         var offset_y = (500 - this.level.height * this.zoom) / 2 + .5 * this.zoom;
         this.group.position.set(offset_x, offset_y);
+
+        this.ui = this.game.add.group();
+        var text_style = {
+            font: "24px Arial",
+            fill: '#ccc',
+            fontWeight: 'bold'
+        };
+        var text = this.game.add.text(250, 24, "Lvl: " + this.level.getName(), text_style, this.ui);
+        var battery = this.game.add.sprite(32, 32, "ui-battery");
+        battery.anchor.set(0.5, 0.5);
+        this.power = this.game.add.sprite(64, 32, "ui-power");
+        this.power.anchor.set(0, 0.5);
+        this.power.scale.x = this.robot.power;
+        this.ui.add(battery);
+        text.anchor.set(0, 0);
+
         this.camera.fade(0xffffff, 300);
     }
 
@@ -74,6 +94,7 @@ class GameState extends Phaser.State {
         this.updateEntities(this.game.time.elapsedMS);
         this.collision_engine.run();
         this.cleanDeadEntities();
+        this.updatePowerBar();
         if (this.robot.power <= 0) {
             this.gameOver();
         }
@@ -266,5 +287,16 @@ class GameState extends Phaser.State {
         };
         this.camera.fade(0x000000, 300);
         this.camera.onFadeComplete.add(startGameOverState, this);
+    }
+
+    private updatePowerBar() {
+        this.power.scale.x = this.robot.power * 1.5;
+        if (this.robot.power < 15) {
+            this.power.tint = 0xff0000;
+        } else if (this.robot.power < 25) {
+            this.power.tint = 0xc2912e;
+        } else {
+            this.power.tint = 0x00ff00;
+        }
     }
 }

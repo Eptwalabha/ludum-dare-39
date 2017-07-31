@@ -42,10 +42,12 @@ class Level {
     height: number;
     private start_point: Phaser.Point;
     private exit_point: Phaser.Point;
+    private name: string;
 
     constructor() {
         this.width = 10;
         this.height = 10;
+        this.name = "no level name";
         this.reset();
     }
 
@@ -80,6 +82,7 @@ class Level {
 
     buildRandom(width: number, height: number, rnd: Phaser.RandomDataGenerator, world: CWorld) {
         this.setDimensions(width, height);
+        this.name = "seed = " + rnd.state();
         this.map = [];
         let tiles: Array<TILE> = [TILE.WALL];
         let ratio: number = 6;
@@ -109,6 +112,7 @@ class Level {
     buildFromSpec (spec: ILevel, layout: ILayout, world: CWorld) {
         this.width = layout.layout[0].length;
         this.height = layout.layout.length;
+        this.name = spec.name ? spec.name : "unicorn";
         world.setLevelDimension(this.width, this.height);
         this.map = [];
         for (var y = 0; y < this.height; ++y) {
@@ -159,5 +163,9 @@ class Level {
 
     getStartPoint() {
         return this.start_point;
+    }
+
+    getName() {
+        return this.name;
     }
 }
