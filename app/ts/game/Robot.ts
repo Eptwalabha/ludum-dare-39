@@ -15,7 +15,9 @@ class Robot extends TurnBasedGameEntity {
         this.body.group = MASK.PLAYER;
         this.body.mask = MASK.WALL | MASK.BULLET | MASK.PICKUP_ITEM | MASK.EXIT_LEVEL;
         this.body.entity = this;
+        this.setSprite("robot.png");
         state.collision_engine.addBody(this.body);
+        this.state.addNewEntity(this);
     }
 
     beginTick(): void {

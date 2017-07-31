@@ -148,7 +148,10 @@ class Level {
                     box.group = MASK.WALL;
                     box.mask = MASK.PLAYER | MASK.BULLET;
                     box.entity = new Wall(x, y, state);
-                    state.collision_engine.addBody(box);
+                    state.entity_factory.spawnTile(x, y, box, true);
+                    // state.collision_engine.addBody(box);
+                } else {
+                    state.entity_factory.spawnTile(x, y, null, false);
                 }
             }
         }
@@ -157,6 +160,7 @@ class Level {
         exit.group = MASK.EXIT_LEVEL;
         exit.mask = MASK.PLAYER;
         exit.entity = new ExitItem(this.exit_point.x, this.exit_point.y, state);
+        exit.entity.setSprite("bulb-off.png");
         world.addBody(exit);
     }
 

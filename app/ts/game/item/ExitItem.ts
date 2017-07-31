@@ -9,7 +9,7 @@ class ExitItem extends GameEntity {
 
     interactWith (entity: GameEntity) {
         if (entity instanceof Robot) {
-            this.state.reachEndOfTheLevel();
+            this.state.reachEndOfTheLevel(this);
         }
     }
 }

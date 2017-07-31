@@ -14,9 +14,13 @@ class MenuState extends Phaser.State {
 
     private bulbs: Array<Phaser.Sprite>;
 
-    create () {
+    preload () {
+        this.game.load.atlas('menu-atlas', 'assets/atlas/menu.png', 'assets/atlas/menu.json');
+    }
 
+    create () {
         this.game.stage.backgroundColor = "#fff";
+        this.game.stage.smoothed = false;
         this.camera.flash(0x000000);
 
         this.background1 = this.game.add.group();
@@ -25,7 +29,8 @@ class MenuState extends Phaser.State {
         this.level_menu = this.game.add.group();
 
 
-        var robot = this.game.add.sprite(0, 0, "menu-robot");
+        var robot = this.game.add.sprite(0, 0, "menu-atlas");
+        robot.frameName = "robot.png";
         robot.anchor.set(0.5, 0.5);
         this.background2.add(robot);
         this.background2.position.set(350, 250);
@@ -42,8 +47,9 @@ class MenuState extends Phaser.State {
                 var offset = j % 2 ? 0 - space_x / 2 : 0;
                 var x = i * space_x + offset;
                 var y = 116 + j * 64;
-                var image = this.game.rnd.pick(['bg-bulb', 'bg-bulb', 'bg-battery', 'bg-accu']);
-                var battery = this.game.add.sprite(x, y, image);
+                var image = this.game.rnd.pick(['bulb', 'battery', 'car-battery', 'bulb', 'accumulator']);
+                var battery = this.game.add.sprite(x, y, "menu-atlas");
+                battery.frameName = image + ".png";
                 battery.anchor.set(0.5, 0.5);
                 battery.data.left = (j % 2 === 0);
                 this.bulbs.push(battery);
@@ -51,17 +57,20 @@ class MenuState extends Phaser.State {
             }
         }
 
-        var line_t = this.game.add.sprite(250, 0, 'black-strip');
+        var line_t = this.game.add.sprite(250, 0, 'menu-atlas');
+        line_t.frameName = "black-strip.png";
         line_t.scale.set(500, 1);
         line_t.anchor.set(0.5, 0);
-        var line_b = this.game.add.sprite(250, 400, 'black-strip');
+        var line_b = this.game.add.sprite(250, 400, 'menu-atlas');
+        line_b.frameName = "black-strip.png";
         line_b.scale.set(500, 1);
         line_b.anchor.set(0.5, 0);
 
         this.background1.add(line_t);
         this.background1.add(line_b);
 
-        var ld39 = this.game.add.sprite(430, 80, 'ld39');
+        var ld39 = this.game.add.sprite(430, 80, 'menu-atlas');
+        ld39.frameName = "ld39.png";
         ld39.angle = 30;
         ld39.anchor.set(0.5, 0.5);
         this.game.add.tween(ld39.scale)
@@ -70,7 +79,8 @@ class MenuState extends Phaser.State {
 
         var game_already_played = true;
         if (game_already_played) {
-            var btn_start = this.game.add.sprite(64, 0, "menu-start");
+            var btn_start = this.game.add.sprite(64, 0, "menu-atlas");
+            btn_start.frameName = "menu-start.png";
             this.main_menu.add(btn_start);
             this.nbr_menu = 1;
         } else {
@@ -81,7 +91,8 @@ class MenuState extends Phaser.State {
             this.nbr_menu = 2;
         }
 
-        this.selector = this.game.add.sprite(32, 0, "menu-selector");
+        this.selector = this.game.add.sprite(32, 0, "menu-atlas");
+        this.selector.frameName = "selector.png";
         this.selector.anchor.set(0.5, 0.5);
 
         this.game.add.tween(this.selector)

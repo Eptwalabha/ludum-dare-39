@@ -6,6 +6,9 @@ var sass = require('gulp-sass');
 var merge = require('merge2');
 var cleanCss = require('gulp-clean-css');
 var rename = require('gulp-rename');
+var exec = require('child_process').exec;
+var path = require('path');
+var fs = require("fs");
 
 var paths = {
     src: {
@@ -28,12 +31,13 @@ var paths = {
     tests: ['./tests/**/*.js']
 };
 
+gulp.task('atlas', gulp.series(_generateAtlas));
 gulp.task('img', _copy("img"));
 gulp.task('fonts', _copy("fonts"));
 gulp.task('json', _copy("json"));
 gulp.task('sass', gulp.series(_sass));
 gulp.task('ts', gulp.series(_ts));
-gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', 'json', _useref));
+gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', 'json', 'atlas', _useref));
 gulp.task('watch', gulp.series('useref', _watch));
 gulp.task('default', gulp.series('watch'));
 
@@ -43,6 +47,7 @@ function _watch (done) {
     gulp.watch(paths.src.json, gulp.series('json', _useref));
     gulp.watch(paths.src.sass, gulp.series('sass', _useref));
     gulp.watch(paths.src.ts, gulp.series('ts', _useref));
+    gulp.watch(paths.src.ts, gulp.series('atlas', _useref));
     gulp.watch(paths.src.index, gulp.series(_useref));
     done();
 }
@@ -111,4 +116,36 @@ function _copy(type) {
                 done();
             });
     };
+}
+
+function _generateAtlas(done) {
+    try { fs.mkdirSync(paths.dst.atlas); } catch (e) {}
+    fs.readdir(paths.src.atlas, {}, function (err, files) {
+        var atlases = [];
+        for (var i = 0; i < files.length; ++i) {
+            var file = path.format({
+                dir: paths.src.atlas,
+                base: files[i]
+            });
+            var info = fs.statSync(file);
+            if (info && info.isDirectory()) {
+                atlases.push({
+                    name: files[i],
+                    path: file
+                });
+            }
+        }
+        var cmds = [];
+        for (i = 0; i < atlases.length; ++i) {
+            var cmd = 'spritesheet-js ' + atlases[i].path + '/* ' +
+                '--format jsonarray --trim --padding 1 ' +
+                '--path ' + paths.dst.atlas + ' --name ' + atlases[i].name;
+            cmds.push(cmd);
+        }
+        exec(cmds.join("; "), function (err) {
+            if (err) throw err;
+            console.info('spritesheet successfully generated');
+            done();
+        });
+    });
 }

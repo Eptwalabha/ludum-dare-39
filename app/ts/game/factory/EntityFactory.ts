@@ -10,10 +10,11 @@ class EntityFactory {
 
     spawnBullet (parent: Foe, direction: number, speed: number, ttlMS: number = 2000) {
         var bullet: Bullet = new Bullet(parent, direction, speed, ttlMS, this.game_state);
-        bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.15);
+        bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.2);
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
         bullet.body.entity = bullet;
+        bullet.setSprite('bullet.png');
         this.game_state.addNewEntity(bullet);
     }
 
@@ -26,10 +27,11 @@ class EntityFactory {
 
     spawnTBBullet (parent: Foe, direction: number, distance: number = 1, ttl: number = 5) {
         var bullet: TBBullet = new TBBullet(parent, direction, distance, ttl, this.game_state);
-        bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.2);
+        bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.3);
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
         bullet.body.entity = bullet;
+        bullet.setSprite('tb-bullet.png');
         this.game_state.addNewEntity(bullet);
     }
 
@@ -40,6 +42,23 @@ class EntityFactory {
         }
     }
 
+    spawnTile (x: number, y: number, body: CBody, wall: boolean = false, key?: string) {
+        var tile: GameEntity;
+        if (wall) {
+            tile = new Wall(x, y, this.game_state);
+            key = key ? key : "wall-" + this.game_state.rnd.between(1, 3) + ".png";
+        } else {
+            tile = new Floor(x, y, this.game_state);
+            key = key ? key : "floor-" + this.game_state.rnd.between(1, 3) + ".png";
+        }
+        if (body) {
+            tile.body = body;
+            tile.body.entity = tile;
+        }
+        tile.setSprite(key);
+        this.game_state.addNewEntity(tile);
+    }
+
     spawnPowerItem (x: number, y: number, amount: number) {
         var power_item: PowerItem = new PowerItem(x, y, amount, this.game_state);
         var s = power_item.size;
@@ -47,6 +66,10 @@ class EntityFactory {
         power_item.body.group = MASK.PICKUP_ITEM;
         power_item.body.mask = MASK.PLAYER;
         power_item.body.entity = power_item;
+        var key = "accumulator";
+        if (amount > 30) key = "battery";
+        if (amount > 50) key = "car-battery";
+        power_item.setSprite(key + '.png');
         this.game_state.addNewEntity(power_item);
     }
 
@@ -79,6 +102,7 @@ class EntityFactory {
                 foe = this.spawnFoeTBSpat(x, y, options);
                 break;
         }
+        foe.setSprite("foe.png");
         this.game_state.addNewEntity(foe);
     }
 

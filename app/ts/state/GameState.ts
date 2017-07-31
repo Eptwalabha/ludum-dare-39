@@ -16,21 +16,24 @@ class GameState extends Phaser.State {
     private tiles: Phaser.Group;
     private robot: Robot;
     private level: Level;
-    private zoom: number = 20;
+    zoom: number = 32;
     private data;
     private entities: Array<GameEntity>;
     private tick_duration: number;
     private tick_running: boolean = false;
     private tick_acc: number = 0;
-    private entity_factory: EntityFactory;
+    entity_factory: EntityFactory;
     collision_engine: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
-    private group: Phaser.Group;
+    group: Phaser.Group;
 
     private ui: Phaser.Group;
     private power: Phaser.Sprite;
     private shake_camera = 0;
+    group_fg: Phaser.Group;
+    private origin: Phaser.Point;
+    private pause_all;
 
     init(data) {
         this.data = data;
@@ -43,6 +46,8 @@ class GameState extends Phaser.State {
         this.game.load.json('messages', 'assets/json/messages.json');
         this.game.load.json('layouts', 'assets/json/layouts.json');
         this.game.load.json('levels', 'assets/json/levels.json');
+
+        this.game.load.atlas('game-atlas', 'assets/atlas/game.png', 'assets/atlas/game.json');
 
         this.game.load.image('ui-battery', 'assets/images/ui-battery.png');
         this.game.load.image('ui-power', 'assets/images/ui-power.png');
@@ -57,18 +62,21 @@ class GameState extends Phaser.State {
             self.collisionStart(a, b);
         };
         this.entities = [];
+        this.group = this.game.add.group();
+        this.group_fg = this.game.add.group();
+        this.ui = this.game.add.group();
+
         this.buildLevel();
         this.buildRobot();
 
-        this.group = this.game.add.group();
         this.graphics = this.game.add.graphics(0, 0);
         this.group.add(this.graphics);
 
         var offset_x = (500 - this.level.width * this.zoom) / 2 + .5 * this.zoom;
         var offset_y = (500 - this.level.height * this.zoom) / 2 + .5 * this.zoom;
-        this.group.position.set(offset_x, offset_y);
+        this.origin = new Phaser.Point(offset_x, offset_y);
+        this.origin.clone(this.group.position);
 
-        this.ui = this.game.add.group();
         var text_style = {
             font: "24px Arial",
             fill: '#ccc',
@@ -83,10 +91,18 @@ class GameState extends Phaser.State {
         this.ui.add(battery);
         text.anchor.set(0, 0);
 
+        this.group.add(this.group_fg);
+        this.group.scale.set(this.zoom, this.zoom);
+
+        this.pause_all = false;
         this.camera.fade(0xffffff, 300);
     }
 
     update() {
+
+        if (this.pause_all) {
+            return;
+        }
 
         this.cameraEffect(this.game.time.elapsedMS);
         if (!this.tick_running && this.checkPlayerMove()) {
@@ -103,14 +119,10 @@ class GameState extends Phaser.State {
     }
 
     render () {
-        this.graphics.clear();
-        this.level.debug(this.graphics, this.zoom);
-        this.robot.debug(this.graphics, this.zoom);
         var self = this;
         this.entities.forEach(function(entity) {
-            entity.debug(self.graphics, self.zoom);
+            entity.preRender(self.game.time.elapsedMS);
         });
-        // this.collision_engine.debug(this.graphics, this.zoom);
     }
 
     private buildLevel() {
@@ -251,7 +263,7 @@ class GameState extends Phaser.State {
         });
     }
 
-    addNewEntity (entity: GameEntity) {
+    addNewEntity (entity: GameEntity, group?: Phaser.Group) {
         this.entities.push(entity);
         if (entity.body) {
             this.collision_engine.addBody(entity.body);
@@ -270,6 +282,9 @@ class GameState extends Phaser.State {
             if (self.entities[index]) {
                 if (self.entities[index].body) {
                     self.collision_engine.removeBody(self.entities[index].body);
+                }
+                if (self.entities[index].sprite) {
+                    self.entities[index].sprite.destroy();
                 }
                 self.entities.splice(index, 1);
             }
@@ -302,15 +317,33 @@ class GameState extends Phaser.State {
         }
     }
 
-    reachEndOfTheLevel() {
-        var game_data = {
-            level: this.data.level + 1,
-            level_seeds: [1, 2, 3]
-        };
-        this.camera.fade(0x000000, 300);
-        this.camera.onFadeComplete.add(function () {
-            this.game.state.start('game', true, false, game_data);
-        }, this);
+    reachEndOfTheLevel(exit: GameEntity) {
+        if (this.robot.power <= 0) {
+            return;
+        }
+
+        this.pause_all = true;
+        exit.sprite.destroy();
+
+        var bulb = this.game.add.sprite(exit.position.x - .5, exit.position.y - .5, 'game-atlas');
+        bulb.scale.set(1 / 32, 1 / 32);
+        this.group_fg.add(bulb);
+        bulb.frameName = "bulb-on.png";
+
+        var y = exit.position.y - 2;
+        this.game.add.tween(bulb.position)
+            .to({y: y}, 1000, Phaser.Easing.Cubic.Out, true)
+            .onComplete.add(function () {
+                var game_data = {
+                    level: this.data.level + 1,
+                    level_seeds: [1, 2, 3]
+                };
+                this.camera.fade(0x000000, 300);
+                this.camera.onFadeComplete.add(function () {
+                    this.game.state.start('game', true, false, game_data);
+                }, this);
+
+            }, this);
     }
 
     playerHit(amount: number) {
@@ -324,7 +357,7 @@ class GameState extends Phaser.State {
 
     spawnText (text, color, to_y) {
         var text_style = {
-            font: "8px Consolas",
+            font: "12px Consolas",
             fill: color,
             fontWeight: 'bold'
         };
@@ -341,10 +374,10 @@ class GameState extends Phaser.State {
     }
 
     private cameraEffect(elapsedMS: number) {
-        this.graphics.position.set(0, 0);
+        this.origin.clone(this.group.position);
         if (this.shake_camera > 0) {
             this.shake_camera -= elapsedMS;
-            this.graphics.position.add(this.rnd.between(-2, 2), this.rnd.between(-2, 2));
+            this.group.position.add(this.rnd.between(-2, 2), this.rnd.between(-2, 2));
         }
     }
 }

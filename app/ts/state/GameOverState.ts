@@ -10,16 +10,14 @@ class GameOverState extends Phaser.State {
     }
 
     preload () {
-        this.game.load.image('empty-battery', 'assets/images/empty-battery.png');
-        this.game.load.image('game-over-robot', 'assets/images/g-o-robot.png');
-        this.game.load.image('game-over-text', 'assets/images/g-o-text.png');
-        this.game.load.image('game-over-dialog', 'assets/images/g-o-dialog.png');
+        this.game.load.atlas('game-over-atlas', 'assets/atlas/gameover.png', 'assets/atlas/gameover.json');
     }
 
     create() {
         this.game.stage.backgroundColor = "#fff";
         this.game.stage.smoothed = false;
         this.camera.flash(0x000000);
+
         this.batteries = [];
         var messages = this.game.cache.getJSON('messages');
         this.background = this.game.add.group();
@@ -36,7 +34,8 @@ class GameOverState extends Phaser.State {
                 var offset = j % 2 ? 0 - space_x / 2 : 0;
                 var x = i * space_x + offset;
                 var y = 116 - 50 + j * space_y;
-                var battery = this.game.add.sprite(x, y, 'empty-battery');
+                var battery = this.game.add.sprite(x, y, 'game-over-atlas');
+                battery.frameName = 'empty-battery.png';
                 battery.anchor.set(0.5, 0.5);
                 battery.data.left = (j % 2 === 0);
                 this.batteries.push(battery);
@@ -44,23 +43,28 @@ class GameOverState extends Phaser.State {
             }
         }
 
-        var line_t = this.game.add.sprite(250, 0, 'black-strip');
+        var line_t = this.game.add.sprite(250, 0, 'game-over-atlas');
+        line_t.frameName = "black-strip.png";
         line_t.scale.set(500, 1);
         line_t.anchor.set(0.5, 0);
-        var line_b = this.game.add.sprite(250, 400, 'black-strip');
+        var line_b = this.game.add.sprite(250, 400, 'game-over-atlas');
+        line_b.frameName = "black-strip.png";
         line_b.scale.set(500, 1);
         line_b.anchor.set(0.5, 0);
 
         this.background.add(line_t);
         this.background.add(line_b);
 
-        var img = this.game.add.sprite(250, 250, 'game-over-robot');
+        var img = this.game.add.sprite(250, 250, 'game-over-atlas');
+        img.frameName = 'robot.png';
         img.anchor.set(0.5, 0.5);
         img.scale.set(2, 2);
-        var run_out = this.game.add.sprite(250, 100, 'game-over-text');
+        var run_out = this.game.add.sprite(250, 100, 'game-over-atlas');
+        run_out.frameName = "text.png";
         run_out.anchor.set(0.5, 0.5);
         run_out.scale.set(2, 2);
-        var dialog = this.game.add.sprite(250, 400, 'game-over-dialog');
+        var dialog = this.game.add.sprite(250, 400, 'game-over-atlas');
+        dialog.frameName = "dialog.png";
         dialog.anchor.set(0.5, 0.5);
         dialog.scale.set(2, 2);
 
@@ -74,7 +78,6 @@ class GameOverState extends Phaser.State {
         text.anchor.set(0.5, 0.5);
 
         this.camera.fade(0xffffff, 300);
-
     }
 
     update () {
