@@ -78,8 +78,8 @@ class Level {
                 this.map[i][j] = tile;
                 if (tile === TILE.WALL) {
                     let box: BoxBody = new BoxBody(i - 0.5, j - 0.5, 1, 1);
-                    box.group = EntityGenerator.COLLISION_MASK.WALL;
-                    box.mask = EntityGenerator.COLLISION_MASK.PLAYER | EntityGenerator.COLLISION_MASK.BULLET;
+                    box.group = MASK.WALL;
+                    box.mask = MASK.PLAYER | MASK.BULLET;
                     word.addBody(box);
                 }
             }

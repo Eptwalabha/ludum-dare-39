@@ -22,7 +22,7 @@ class GameState extends Phaser.State {
     private tick_duration: number;
     private tick_running: boolean = false;
     private tick_acc: number = 0;
-    private entity_generator: EntityGenerator;
+    private entity_generator: EntityFactory;
     collision_world: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
@@ -36,9 +36,9 @@ class GameState extends Phaser.State {
 
     create () {
         this.level = new Level(20, 20);
-        this.entity_generator = new EntityGenerator(this);
         this.entities = [];
         this.collision_world = new CWorld();
+        this.entity_generator = new EntityFactory(this);
         this.robot = new Robot(10, 10, this.collision_world);
         let self = this;
         this.collision_world.onCollisionStart = function (a: CBody, b: CBody) {

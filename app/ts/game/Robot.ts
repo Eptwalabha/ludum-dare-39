@@ -11,8 +11,8 @@ class Robot extends TurnBasedGameEntity {
         this.destination = new Phaser.Point(x, y);
         this.power = 100;
         this.body = new CircleBody(x, y, .4);
-        this.body.group = EntityGenerator.COLLISION_MASK.PLAYER;
-        this.body.mask = EntityGenerator.COLLISION_MASK.WALL | EntityGenerator.COLLISION_MASK.BULLET;
+        this.body.group = MASK.PLAYER;
+        this.body.mask = MASK.WALL | MASK.BULLET;
         world.addBody(this.body);
     }
 
