@@ -35,6 +35,8 @@ class GameState extends Phaser.State {
     }
 
     create () {
+        this.camera.flash(0x000000);
+        this.camera.fade(0xffffff, 300);
         this.level = new Level(20, 20);
         this.entities = [];
         this.collision_world = new CWorld();
@@ -92,7 +94,7 @@ class GameState extends Phaser.State {
         this.collision_world.run();
         this.cleanDeadEntities();
         if (this.robot.power <= 0) {
-            this.game.state.start('game', true, false, this.data);
+            this.gameOver();
         }
     }
 
@@ -200,20 +202,17 @@ class GameState extends Phaser.State {
     }
 
     private collisionStart (bodyA: CBody, bodyB: CBody) {
-
         if (bodyA.entity && !bodyA.entity.dead && bodyB.entity && !bodyB.entity.dead) {
             bodyA.entity.interactWith(bodyB.entity);
             bodyB.entity.interactWith(bodyA.entity);
         }
+    }
 
-        // if (bodyA.entity instanceof PowerItem || bodyB.entity instanceof PowerItem) {
-        //     console.log("yo power");
-        // }
-        // if (bodyA.entity instanceof Bullet || bodyA.entity instanceof TBBullet) {
-        //     bodyA.entity.dead = true;
-        // }
-        // if (bodyB.entity instanceof Bullet || bodyB.entity instanceof TBBullet) {
-        //     bodyB.entity.dead = true;
-        // }
+    private gameOver () {
+        var startGameOverState = function () {
+            this.game.state.start('game-over', true, false, this.data);
+        };
+        this.camera.fade(0x000000, 300);
+        this.camera.onFadeComplete.add(startGameOverState, this);
     }
 }

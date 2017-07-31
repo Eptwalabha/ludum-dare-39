@@ -17,6 +17,9 @@ class MenuState extends Phaser.State {
     create () {
 
         this.game.stage.backgroundColor = "#fff";
+        this.game.stage.smoothed = false;
+        this.camera.flash(0x000000);
+
         this.background1 = this.game.add.group();
         this.background2 = this.game.add.group();
         this.main_menu = this.game.add.group();
@@ -31,20 +34,33 @@ class MenuState extends Phaser.State {
 
         this.bulbs = [];
 
-        var space_x = 2 * 64;
-        var space_y = 64;
-
-        for (var i = 0; i < 5; ++i) {
-            for (var y = 0; y < 5; ++y) {
-                var offset = y % 2 ? 0 : space_x / 2;
+        var nbr_per_line = 6;
+        var nbr_line = 5;
+        var width = 600;
+        var space_x = width / nbr_per_line;
+        for (var i = 0; i < nbr_per_line; ++i) {
+            for (var j = 0; j < nbr_line; ++j) {
+                var offset = j % 2 ? 0 - space_x / 2 : 0;
+                var x = i * space_x + offset;
+                var y = 116 + j * 64;
                 var image = this.game.rnd.pick(['bg-bulb', 'bg-bulb', 'bg-battery', 'bg-accu']);
-                var bulb = this.game.add.sprite(i * space_x + offset + y * 16, 100 + y * space_y, image);
-                bulb.anchor.set(0.5, 0.5);
-                bulb.data.left = y % 2 === 0;
-                this.bulbs.push(bulb);
-                this.background1.add(bulb);
+                var battery = this.game.add.sprite(x, y, image);
+                battery.anchor.set(0.5, 0.5);
+                battery.data.left = (j % 2 === 0);
+                this.bulbs.push(battery);
+                this.background1.add(battery);
             }
         }
+
+        var line_t = this.game.add.sprite(250, 0, 'black-strip');
+        line_t.scale.set(500, 1);
+        line_t.anchor.set(0.5, 0);
+        var line_b = this.game.add.sprite(250, 400, 'black-strip');
+        line_b.scale.set(500, 1);
+        line_b.anchor.set(0.5, 0);
+
+        this.background1.add(line_t);
+        this.background1.add(line_b);
 
         var ld39 = this.game.add.sprite(430, 80, 'ld39');
         ld39.angle = 30;
@@ -76,7 +92,9 @@ class MenuState extends Phaser.State {
         this.main_menu.position.set(64, 300);
         this.current_menu = 0;
         this.updateSelectorPosition();
-        this.continueGame();
+        // this.continueGame();
+
+        this.camera.fade(0xffffff, 300);
     }
 
     update () {
@@ -86,13 +104,13 @@ class MenuState extends Phaser.State {
         this.bulbs.forEach(function (bulb) {
             if (bulb.data.left) {
                 bulb.position.x -= ts * 500 / 20000;
-                if (bulb.position.x <= -64) {
-                    bulb.position.x += 500 + 128;
+                if (bulb.position.x <= -50) {
+                    bulb.position.x += 600;
                 }
             } else {
                 bulb.position.x += ts * 500 / 20000;
-                if (bulb.position.x >= 564) {
-                    bulb.position.x -= 500 + 128;
+                if (bulb.position.x >= 550) {
+                    bulb.position.x -= 600;
                 }
             }
         });

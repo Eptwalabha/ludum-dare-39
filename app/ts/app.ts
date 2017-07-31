@@ -7,6 +7,7 @@ class SimpleGame {
         game.state.add('loading', new LoadingState());
         game.state.add('menu', new MenuState());
         game.state.add('game', new GameState());
+        game.state.add('game-over', new GameOverState());
         game.state.start('loading');
     }
 }

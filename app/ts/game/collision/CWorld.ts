@@ -161,16 +161,14 @@ class CWorld {
     }
 
     static checkCollision(bodyA: CBody, bodyB: CBody): boolean {
-        let ta = bodyA.type;
-        let tb = bodyB.type;
-        if (ta === tb) {
-            if (ta === CBODY_TYPE.BOX) {
+        if (bodyA.type === bodyB.type) {
+            if (bodyA.type === CBODY_TYPE.BOX) {
                 return CWorld.checkCollisionBoxToBox(bodyA as BoxBody, bodyB as BoxBody);
             } else {
                 return CWorld.checkCollisionCircleToCircle(bodyA as CircleBody, bodyB as CircleBody);
             }
         } else {
-            if (ta === CBODY_TYPE.BOX) {
+            if (bodyA.type === CBODY_TYPE.BOX) {
                 return CWorld.checkCollisionBoxToCircle(bodyA as BoxBody, bodyB as CircleBody);
             } else {
                 return CWorld.checkCollisionBoxToCircle(bodyB as BoxBody, bodyA as CircleBody);
@@ -188,7 +186,6 @@ class CWorld {
 
         if (c_dist_x > (box.hw + circle.radius)) return false;
         if (c_dist_y > (box.hh + circle.radius)) return false;
-
         if (c_dist_x <= box.hw) return true;
         if (c_dist_y <= box.hh) return true;
 

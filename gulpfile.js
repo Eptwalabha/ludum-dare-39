@@ -11,6 +11,7 @@ var paths = {
     src: {
         ts: ['./app/ts/**/*.ts'],
         sass: ['./app/sass/**/*.scss'],
+        json: ['./app/assets/json/**/*.json'],
         atlas: './app/assets/atlas',
         img: ['./app/assets/images/**/*'],
         fonts: ['./app/assets/fonts/**/*'],
@@ -19,6 +20,7 @@ var paths = {
     dst: {
         css: './app/css/',
         js: './app/js/',
+        json: './build/assets/json',
         atlas: './build/assets/atlas',
         img: './build/assets/images',
         fonts: './build/assets/fonts'
@@ -26,17 +28,19 @@ var paths = {
     tests: ['./tests/**/*.js']
 };
 
-gulp.task('img', _copyImages);
-gulp.task('fonts', _copyFonts);
+gulp.task('img', _copy("img"));
+gulp.task('fonts', _copy("fonts"));
+gulp.task('json', _copy("json"));
 gulp.task('sass', gulp.series(_sass));
 gulp.task('ts', gulp.series(_ts));
-gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', _useref));
+gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', 'json', _useref));
 gulp.task('watch', gulp.series('useref', _watch));
 gulp.task('default', gulp.series('watch'));
 
 function _watch (done) {
     gulp.watch(paths.src.img, gulp.series('img', _useref));
     gulp.watch(paths.src.fonts, gulp.series('fonts', _useref));
+    gulp.watch(paths.src.json, gulp.series('json', _useref));
     gulp.watch(paths.src.sass, gulp.series('sass', _useref));
     gulp.watch(paths.src.ts, gulp.series('ts', _useref));
     gulp.watch(paths.src.index, gulp.series(_useref));
@@ -87,4 +91,24 @@ function _copyFonts(done) {
                 .pipe(gulp.dest(paths.dst.fonts));
             done();
         });
+}
+
+function _copyMessages(done) {
+    del(paths.dst.messages)
+        .then(function() {
+            gulp.src(paths.src.messages)
+                .pipe(gulp.dest(paths.dst.messages));
+            done();
+        });
+}
+
+function _copy(type) {
+    return function (done) {
+        del(paths.dst[type])
+            .then(function() {
+                gulp.src(paths.src[type])
+                    .pipe(gulp.dest(paths.dst[type]));
+                done();
+            });
+    };
 }

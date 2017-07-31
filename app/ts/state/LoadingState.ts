@@ -1,6 +1,7 @@
 class LoadingState extends Phaser.State {
 
     preload() {
+        this.game.load.image('black-strip', 'assets/images/black-strip.png');
         this.game.load.image('splash-screen', 'assets/images/splash-screen.png');
         this.game.load.image('menu-background', 'assets/images/menu-background.png');
         this.game.load.image('menu-selector', 'assets/images/menu-selector.png');
@@ -17,14 +18,14 @@ class LoadingState extends Phaser.State {
         this.game.load.image('robot', 'assets/images/robot.png');
         this.game.load.image('tile-floor', 'assets/images/to-do.png');
         this.game.load.image('tile-wall', 'assets/images/to-do.png');
+        this.game.load.json('messages', 'assets/json/messages.json');
     }
 
-
     loadUpdate() {
-        console.log("loadUpdate");
     }
 
     create() {
+        // this.game.state.start('game-over');
         this.game.state.start('menu');
     }
 }

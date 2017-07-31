@@ -89,8 +89,8 @@ class Robot extends TurnBasedGameEntity {
             if (this.power > 100) this.power = 100;
         }
         if (entity instanceof Bullet || entity instanceof TBBullet) {
-            this.power -= 10;
-            if (this.power <= 10) this.power = 10;
+            this.power = 0;
+            // if (this.power <= 10) this.power = 10;
             entity.dead = true;
         }
     }
