@@ -109,6 +109,7 @@ class Level {
     buildFromSpec (spec: ILevel, layout: ILayout, world: CWorld) {
         this.width = layout.layout[0].length;
         this.height = layout.layout.length;
+        world.setLevelDimension(this.width, this.height);
         this.map = [];
         for (var y = 0; y < this.height; ++y) {
             this.map[y] = [];

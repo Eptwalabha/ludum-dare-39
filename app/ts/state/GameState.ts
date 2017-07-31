@@ -26,7 +26,9 @@ class GameState extends Phaser.State {
     collision_engine: CWorld;
     private score = 0;
     private graphics: Phaser.Graphics;
+
     private group: Phaser.Group;
+    private ui: Phaser.Group;
 
     init(data) {
         this.data = data;
@@ -57,7 +59,9 @@ class GameState extends Phaser.State {
         this.graphics = this.game.add.graphics(0, 0);
         this.group.add(this.graphics);
 
-        this.group.position.x = 100;
+        var offset_x = (500 - this.level.width * this.zoom) / 2 + .5 * this.zoom;
+        var offset_y = (500 - this.level.height * this.zoom) / 2 + .5 * this.zoom;
+        this.group.position.set(offset_x, offset_y);
         this.camera.fade(0xffffff, 300);
     }
 

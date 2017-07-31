@@ -23,26 +23,44 @@ class CWorld {
     private next_id: number;
 
     constructor () {
-        let width = 30;
-        let height = 30;
-        let nbr = 15;
 
         this.quad_def = {
-            dimensions: new Phaser.Point(width, height),
-            cell_dimensions: new Phaser.Point(width / nbr, height / nbr),
-            grid: new Phaser.Point(nbr, nbr),
-            position: new Phaser.Point(-5, -5)
+            dimensions: new Phaser.Point(),
+            cell_dimensions: new Phaser.Point(),
+            grid: new Phaser.Point(),
+            position: new Phaser.Point()
         };
+        this.setLevelDimension(10, 10);
 
         this.next_id = 0;
         this.bodies = [];
         this.resetQuads();
     }
 
-    resetQuads () {
+    setLevelDimension (width: number, height: number) {
+        this.quad_def.cell_dimensions.x = 3;
+        this.quad_def.cell_dimensions.y = 3;
+        this.quad_def.grid.x = Math.floor((width + this.quad_def.cell_dimensions.x) / this.quad_def.cell_dimensions.x) + 1;
+        this.quad_def.grid.y = Math.floor((height + this.quad_def.cell_dimensions.y) / this.quad_def.cell_dimensions.y) + 1;
+        this.quad_def.dimensions.x = this.quad_def.cell_dimensions.x * this.quad_def.grid.x;
+        this.quad_def.dimensions.y = this.quad_def.cell_dimensions.y * this.quad_def.grid.y;
+        this.quad_def.position.x = - (this.quad_def.dimensions.x - width) / 2;
+        this.quad_def.position.y = - (this.quad_def.dimensions.y - height) / 2;
+        this.resetQuads();
+        this.updateAllBodies();
+    }
+
+    private resetQuads () {
         this.quads = [];
         for (var i = 0, size = (this.quad_def.grid.x * this.quad_def.grid.y); i < size; ++i) {
             this.quads[i] = [];
+        }
+    }
+
+    private updateAllBodies () {
+        for (var body_id in this.bodies) {
+            if (!this.bodies.hasOwnProperty(body_id)) continue;
+            this.updatePosition(this.bodies[body_id]);
         }
     }
 

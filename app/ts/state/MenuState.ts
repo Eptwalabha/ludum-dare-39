@@ -148,11 +148,17 @@ class MenuState extends Phaser.State {
     }
 
     continueGame (level) {
-        var game_data = {
+
+        var startGame = function () {
+            var game_data = {
                 level: level,
                 level_seeds: this.seeds
             };
-        this.game.state.start('game', true, false, game_data);
+            this.game.state.start('game', true, false, game_data);
+        };
+        this.camera.fade(0x000000, 300);
+        this.camera.onFadeComplete.add(startGame, this);
+
     }
 
     displayLevels () {
