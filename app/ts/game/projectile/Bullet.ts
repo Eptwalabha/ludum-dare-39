@@ -5,8 +5,8 @@ class Bullet extends GameEntity {
     ttl: number;
     parent: GameEntity;
 
-    constructor(parent: GameEntity, direction: number, speed: number, ttl: number) {
-        super(parent.position.x, parent.position.y, '#000000', 0.3);
+    constructor(parent: GameEntity, direction: number, speed: number, ttl: number, state: GameState) {
+        super(parent.position.x, parent.position.y, '#000000', 0.3, state);
         this.speed = speed;
         this.ttl = ttl;
         var x = Math.cos(direction);

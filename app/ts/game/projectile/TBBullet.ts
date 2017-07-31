@@ -6,8 +6,8 @@ class TBBullet extends TurnBasedGameEntity {
     origin: Phaser.Point;
     destination: Phaser.Point;
 
-    constructor (parent: GameEntity, direction: number, distance: number, ttl: number) {
-        super(parent.position.x, parent.position.y, '#cccccc', 0.4);
+    constructor (parent: GameEntity, direction: number, distance: number, ttl: number, state: GameState) {
+        super(parent.position.x, parent.position.y, '#cccccc', 0.4, state);
         this.ttl = ttl;
 
         this.normal = new Phaser.Point(

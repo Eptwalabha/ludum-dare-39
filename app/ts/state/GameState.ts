@@ -120,7 +120,7 @@ class GameState extends Phaser.State {
         } else {
             var level_spec: ILevel = levels.levels[this.data.level];
             var layout: ILayout = layouts[level_spec.layout];
-            this.level.buildFromSpec(level_spec, layout, this.collision_engine);
+            this.level.buildFromSpec(level_spec, layout, this);
             this.buildFoes(level_spec);
             this.buildItems(level_spec);
         }
@@ -128,7 +128,7 @@ class GameState extends Phaser.State {
 
     private randomLevel () {
         var rnd = new Phaser.RandomDataGenerator(this.data.level_seeds);
-        this.level.buildRandom(20, 20, rnd, this.collision_engine);
+        this.level.buildRandom(20, 20, rnd, this);
         this.game.rnd.sow([3, 2, 1]);
         let nbr_foe = 1;
         for (var i = 0; i < nbr_foe; ++i) {
@@ -142,7 +142,7 @@ class GameState extends Phaser.State {
                 ok = this.level.getTileNatureAt(p) === TILE.FLOOR;
             } while (!ok && fail >= 0);
             if (ok) {
-                var foe: Foe = new Foe(p.x, p.y, this.entity_factory);
+                var foe: Foe = new Foe(p.x, p.y, this.entity_factory, this);
                 this.entities.push(foe);
             }
         }
@@ -165,7 +165,7 @@ class GameState extends Phaser.State {
 
     private buildRobot() {
         var start = this.level.getStartPoint();
-        this.robot = new Robot(start, this.collision_engine);
+        this.robot = new Robot(start, this.collision_engine, this);
     }
 
     private buildFoes (level_spec: ILevel) {
@@ -298,5 +298,16 @@ class GameState extends Phaser.State {
         } else {
             this.power.tint = 0x00ff00;
         }
+    }
+
+    reachEndOfTheLevel() {
+        var game_data = {
+            level: this.data.level + 1,
+            level_seeds: [1, 2, 3]
+        };
+        this.camera.fade(0x000000, 300);
+        this.camera.onFadeComplete.add(function () {
+            this.game.state.start('game', true, false, game_data);
+        }, this);
     }
 }

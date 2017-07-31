@@ -6,13 +6,15 @@ abstract class GameEntity {
     dead: boolean;
     size: number;
     body: CBody;
+    state: GameState;
 
-    constructor (x, y, color, size = 1) {
+    constructor (x, y, color, size = 1, state: GameState) {
         this.color = color;
         this.position = new Phaser.Point(x, y);
         this.circle = new Phaser.Circle(this.position.x, this.position.y, size);
         this.dead = false;
         this.size = size;
+        this.state = state;
     }
 
     // abstract beginTick(): void;

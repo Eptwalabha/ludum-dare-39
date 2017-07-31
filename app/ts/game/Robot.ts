@@ -5,8 +5,8 @@ class Robot extends TurnBasedGameEntity {
     private destination: Phaser.Point;
     private power_loss_rate = 10;
 
-    constructor(start: Phaser.Point, world: CWorld) {
-        super(start.x, start.y, '#00ff00', .9);
+    constructor(start: Phaser.Point, world: CWorld, state: GameState) {
+        super(start.x, start.y, '#00ff00', .9, state);
         this.origin = new Phaser.Point(start.x, start.y);
         this.destination = new Phaser.Point(start.x, start.y);
         this.power = 100;

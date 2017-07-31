@@ -9,7 +9,7 @@ class EntityFactory {
     }
 
     spawn_bullet (parent: Foe, direction: number, speed: number, ttlMS: number = 2000) {
-        var bullet: Bullet = new Bullet(parent, direction, speed, ttlMS);
+        var bullet: Bullet = new Bullet(parent, direction, speed, ttlMS, this.game_state);
         bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.15);
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
@@ -25,7 +25,7 @@ class EntityFactory {
     }
 
     spawn_tb_bullet (parent: Foe, direction: number, distance: number = 1, ttl: number = 5) {
-        var bullet: TBBullet = new TBBullet(parent, direction, distance, ttl);
+        var bullet: TBBullet = new TBBullet(parent, direction, distance, ttl, this.game_state);
         bullet.body = new CircleBody(parent.position.x, parent.position.y, 0.2);
         bullet.body.group = MASK.BULLET;
         bullet.body.mask = MASK.WALL | MASK.PLAYER;
@@ -41,7 +41,7 @@ class EntityFactory {
     }
 
     spawn_power_item (x: number, y: number, amount: number) {
-        var power_item: PowerItem = new PowerItem(x, y, amount);
+        var power_item: PowerItem = new PowerItem(x, y, amount, this.game_state);
         var s = power_item.size;
         power_item.body = new BoxBody(x - s / 2, y - s / 2, s, s);
         power_item.body.group = MASK.PICKUP_ITEM;
@@ -83,7 +83,7 @@ class EntityFactory {
     }
 
     private spawnFoeTBSpat (x: number, y: number, options: any): Foe {
-        return new Foe(x, y, this);
+        return new Foe(x, y, this, this.game_state);
     }
 
 }

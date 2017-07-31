@@ -1,8 +1,8 @@
 class PowerItem extends GameEntity {
     amount;
 
-    constructor (x: number, y: number, amount: number) {
-        super(x, y, '#eae83f', 0.6);
+    constructor (x: number, y: number, amount: number, state: GameState) {
+        super(x, y, '#eae83f', 0.6, state);
         this.amount = amount;
     }
 

@@ -8,8 +8,8 @@ class Foe extends TurnBasedGameEntity {
     private shooting: number;
     private angle: number;
 
-    constructor(x: number, y: number, entity_generator: EntityFactory) {
-        super(x, y, '#ff0000');
+    constructor(x: number, y: number, entity_generator: EntityFactory, state: GameState) {
+        super(x, y, '#ff0000', 1, state);
         this.entity_generator = entity_generator;
         this.origin = new Phaser.Point(x, y);
         this.destination = new Phaser.Point(x, y);

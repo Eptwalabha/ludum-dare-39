@@ -80,7 +80,7 @@ class Level {
         }
     }
 
-    buildRandom(width: number, height: number, rnd: Phaser.RandomDataGenerator, world: CWorld) {
+    buildRandom(width: number, height: number, rnd: Phaser.RandomDataGenerator, state: GameState) {
         this.setDimensions(width, height);
         this.name = "seed = " + rnd.state();
         this.map = [];
@@ -106,14 +106,14 @@ class Level {
         } while (!position_set || attempt < max);
         pos.clone(this.start_point);
 
-        this.buildLevelCollision(world);
+        this.buildLevelCollision(state, state.collision_engine);
     }
 
-    buildFromSpec (spec: ILevel, layout: ILayout, world: CWorld) {
+    buildFromSpec (spec: ILevel, layout: ILayout, state: GameState) {
         this.width = layout.layout[0].length;
         this.height = layout.layout.length;
         this.name = spec.name ? spec.name : "unicorn";
-        world.setLevelDimension(this.width, this.height);
+        state.collision_engine.setLevelDimension(this.width, this.height);
         this.map = [];
         for (var y = 0; y < this.height; ++y) {
             this.map[y] = [];
@@ -125,18 +125,18 @@ class Level {
         this.start_point.y = spec.start ? spec.start.y : layout.start.y;
         this.exit_point.x = spec.exit ? spec.exit.x : layout.exit.x;
         this.exit_point.y = spec.exit ? spec.exit.y : layout.exit.y;
-        this.buildLevelCollision(world);
+        this.buildLevelCollision(state, state.collision_engine);
     }
 
-    private buildLevelCollision (world: CWorld) {
+    private buildLevelCollision (state: GameState, world: CWorld) {
         for (var y = 0; y < this.height; ++y) {
             for (var x = 0; x < this.width; ++x) {
                 if (this.map[y][x] === TILE.WALL) {
                     let box: BoxBody = new BoxBody(x - 0.5, y - 0.5, 1, 1);
                     box.group = MASK.WALL;
                     box.mask = MASK.PLAYER | MASK.BULLET;
-                    box.entity = new Wall(x, y);
-                    world.addBody(box);
+                    box.entity = new Wall(x, y, state);
+                    state.collision_engine.addBody(box);
                 }
             }
         }
@@ -144,7 +144,7 @@ class Level {
         let exit: BoxBody = new BoxBody(this.exit_point.x - .1, this.exit_point.y - .1, .2, .2);
         exit.group = MASK.EXIT_LEVEL;
         exit.mask = MASK.PLAYER;
-        exit.entity = new ExitItem(this.exit_point.x, this.exit_point.y);
+        exit.entity = new ExitItem(this.exit_point.x, this.exit_point.y, state);
         world.addBody(exit);
     }
 

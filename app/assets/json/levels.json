@@ -2,10 +2,53 @@
   "levels": [
     {
       "name": "first empty room",
-      "layout": "tuto-5"
+      "layout": "tuto-1"
     },
     {
-      "name": "first enemy",
+      "name": "is that supposed\nto be a maze?",
+      "layout": "tuto-2"
+    },
+    {
+      "name": "What's that?",
+      "layout": "tuto-2",
+      "items": [
+        {
+          "type": "energy",
+          "options": { "amount": 100 },
+          "position": { "x": 5, "y": 2 }
+        }
+      ]
+    },
+    {
+      "name": "First enemy!",
+      "layout": "tuto-1",
+      "foes": [
+        {
+          "type": "tb-spat",
+          "position": { "x": 5, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "What? again?...\nno, it looks different",
+      "layout": "tuto-1",
+      "foes": [
+        {
+          "type": "tb-spat",
+          "position": { "x": 5, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "Watch for the bullet!",
       "layout": "tuto-5",
       "foes": [
         {
