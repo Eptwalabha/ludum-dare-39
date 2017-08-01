@@ -46,7 +46,6 @@ class CWorld {
         this.quad_def.dimensions.y = this.quad_def.cell_dimensions.y * this.quad_def.grid.y;
         this.quad_def.position.x = - (this.quad_def.dimensions.x - width) / 2;
         this.quad_def.position.y = - (this.quad_def.dimensions.y - height) / 2;
-        console.log(this.bodies);
         this.resetQuads();
         this.updateAllBodies();
     }

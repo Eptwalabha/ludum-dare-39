@@ -14,18 +14,42 @@
       "items": [
         {
           "type": "energy",
+          "options": { "amount": 25 },
+          "position": { "x": 3, "y": 3 }
+        },
+        {
+          "type": "energy",
+          "options": { "amount": 50 },
+          "position": { "x": 5, "y": 3 }
+        },
+        {
+          "type": "energy",
           "options": { "amount": 100 },
-          "position": { "x": 5, "y": 2 }
+          "position": { "x": 7, "y": 3 }
         }
       ]
     },
     {
-      "name": "First enemy!",
-      "layout": "tuto-1",
+      "name": "sneaky pinky",
+      "layout": "tuto-3",
       "foes": [
         {
-          "type": "tb-spat",
-          "position": { "x": 5, "y": 2 },
+          "type": "pinky-tb-left",
+          "position": { "x": 11, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "face to face!",
+      "layout": "tuto-1-2",
+      "foes": [
+        {
+          "type": "dark-tb",
+          "position": { "x": 5, "y": 3 },
           "options": {
             "speed": 1000,
             "nbr_wave": 5
@@ -35,11 +59,39 @@
     },
     {
       "name": "What? again?...\nno, it looks different",
-      "layout": "tuto-1",
+      "layout": "tuto-1-2",
       "foes": [
         {
-          "type": "tb-spat",
-          "position": { "x": 5, "y": 2 },
+          "type": "dark",
+          "position": { "x": 5, "y": 3 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "I don't like this one",
+      "layout": "tuto-1-2",
+      "foes": [
+        {
+          "type": "spat-tb",
+          "position": { "x": 5, "y": 3 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "sneaky pinky part 2",
+      "layout": "tuto-3-2",
+      "foes": [
+        {
+          "type": "pinky-tb-left",
+          "position": { "x": 17, "y": 2 },
           "options": {
             "speed": 1000,
             "nbr_wave": 5
@@ -101,7 +153,24 @@
         },
         {
           "type": "tb-spat",
-          "position": { "x": 9, "y": 8 },
+          "position": { "x": 10, "y": 9 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5,
+            "offset": 500
+          }
+        },
+        {
+          "type": "dark",
+          "position": { "x": 10, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        },
+        {
+          "type": "dark",
+          "position": { "x": 4, "y": 9 },
           "options": {
             "speed": 1000,
             "nbr_wave": 5,
@@ -112,18 +181,75 @@
       "items": [
         {
           "type": "energy",
-          "options": { "amount": 100 },
-          "position": { "x": 1, "y": 3 }
+          "options": { "amount": 50 },
+          "position": { "x": 7, "y": 1 }
         },
         {
           "type": "energy",
           "options": { "amount": 50 },
-          "position": { "x": 1, "y": 7 }
+          "position": { "x": 7, "y": 5 }
         },
         {
           "type": "energy",
-          "options": { "amount": 25 },
-          "position": { "x": 1, "y": 5 }
+          "options": { "amount": 100 },
+          "position": { "x": 7, "y": 8 }
+        }
+      ]
+    },
+    {
+      "name": "... not well at all.",
+      "layout": "skull",
+      "foes": [
+        {
+          "type": "tb-spat",
+          "position": { "x": 4, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        },
+        {
+          "type": "tb-spat",
+          "position": { "x": 10, "y": 9 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5,
+            "offset": 500
+          }
+        },
+        {
+          "type": "tb-spat",
+          "position": { "x": 10, "y": 2 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5
+          }
+        },
+        {
+          "type": "tb-spat",
+          "position": { "x": 4, "y": 9 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 5,
+            "offset": 500
+          }
+        }
+      ],
+      "items": [
+        {
+          "type": "energy",
+          "options": { "amount": 50 },
+          "position": { "x": 7, "y": 1 }
+        },
+        {
+          "type": "energy",
+          "options": { "amount": 50 },
+          "position": { "x": 7, "y": 5 }
+        },
+        {
+          "type": "energy",
+          "options": { "amount": 100 },
+          "position": { "x": 7, "y": 8 }
         }
       ]
     },
@@ -133,10 +259,6 @@
       "item": [
         { "type": "energy", "options": { "amount": 25}, "position": { "x": 7, "y": 4 } }
       ]
-    },
-    {
-      "name": "",
-      "layout": "pillars"
     }
   ]
 }

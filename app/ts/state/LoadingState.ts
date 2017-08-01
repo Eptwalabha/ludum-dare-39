@@ -7,7 +7,7 @@ class LoadingState extends Phaser.State {
     create() {
         this.stage.smoothed = false;
         this.game.state.start('menu');
-        // this.continueGame(5);
+        // this.continueGame(9);
     }
 
     // TODO à virer

@@ -2,7 +2,7 @@ class Foe extends TurnBasedGameEntity {
     position: Phaser.Point;
     private origin: Phaser.Point;
     private destination: Phaser.Point;
-    private entity_generator: EntityFactory;
+    entity_generator: EntityFactory;
     private shooting_rate: number;
     private next_shooting: number;
     private shooting: number;

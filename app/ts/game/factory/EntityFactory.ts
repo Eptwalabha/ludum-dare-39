@@ -97,12 +97,34 @@ class EntityFactory {
 
     spawnFoe (x: number, y: number, type: string, options: any = []) {
         var foe: Foe = null;
+        var key = "foe.png";
         switch (type) {
+            case "pinky-tb":
+                foe = new PinkyBTFoe(x, y, 1, 0, -1, this, this.game_state);
+                key = "foe-pinky.png";
+                break;
+            case "pinky-tb-left":
+                foe = new PinkyBTFoe(x, y, 9, 4, 0, this, this.game_state);
+                key = "foe-pinky.png";
+                break;
+            case "pinky":
+                foe = new PinkyFoe(x, y, 500, Math.PI / 4, 0, this, this.game_state);
+                key = "foe-pinky.png";
+                break;
+            case "dark-tb":
+                foe = new DarkBTFoe(x, y, 5, 5, this, this.game_state);
+                key = "foe.png";
+                break;
+            case "dark":
+                foe = new DarkFoe(x, y, 1000, 6, this, this.game_state);
+                key = "foe.png";
+                break;
             default:
-                foe = this.spawnFoeTBSpat(x, y, options);
+                foe = new PinkyBTFoe(x, y, 1, 0, -1, this, this.game_state);
+                key = "foe-pinky.png";
                 break;
         }
-        foe.setSprite("foe.png");
+        foe.setSprite(key);
         this.game_state.addNewEntity(foe);
     }
 
