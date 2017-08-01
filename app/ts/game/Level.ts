@@ -18,9 +18,7 @@ interface ILayouts {
 }
 
 interface ILayout {
-    layout: Array<string>,
-    start: { x: number, y: number },
-    exit: { x: number, y: number }
+    layout: Array<string>
 }
 
 interface IItem {
@@ -130,13 +128,31 @@ class Level {
         for (var y = 0; y < this.height; ++y) {
             this.map[y] = [];
             for (var x = 0; x < this.width; ++x) {
-                this.map[y][x] = layout.layout[y][x] === "0" ? TILE.WALL : TILE.FLOOR;
+                var type = TILE.WALL;
+                switch (layout.layout[y][x]) {
+                    case "0":
+                        type = TILE.WALL;
+                        break;
+                    case "S":
+                        type = TILE.FLOOR;
+                        this.start_point.set(x, y);
+                        break;
+                    case "E":
+                        type = TILE.FLOOR;
+                        this.exit_point.set(x, y);
+                        break;
+                    default:
+                        type = TILE.FLOOR;
+                }
+                this.map[y][x] = type;
             }
         }
-        this.start_point.x = spec.start ? spec.start.x : layout.start.x;
-        this.start_point.y = spec.start ? spec.start.y : layout.start.y;
-        this.exit_point.x = spec.exit ? spec.exit.x : layout.exit.x;
-        this.exit_point.y = spec.exit ? spec.exit.y : layout.exit.y;
+        if (spec.start) {
+            this.start_point.set(spec.start.x, spec.start.y);
+        }
+        if (spec.exit) {
+            this.exit_point.set(spec.exit.x, spec.exit.y);
+        }
         this.buildLevelCollision(state, state.collision_engine);
     }
 
