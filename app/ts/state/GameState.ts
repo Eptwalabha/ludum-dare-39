@@ -46,11 +46,7 @@ class GameState extends Phaser.State {
         this.game.load.json('messages', 'assets/json/messages.json');
         this.game.load.json('layouts', 'assets/json/layouts.json');
         this.game.load.json('levels', 'assets/json/levels.json');
-
         this.game.load.atlas('game-atlas', 'assets/atlas/game.png', 'assets/atlas/game.json');
-
-        this.game.load.image('ui-battery', 'assets/images/ui-battery.png');
-        this.game.load.image('ui-power', 'assets/images/ui-power.png');
     }
 
     create () {
@@ -72,6 +68,12 @@ class GameState extends Phaser.State {
         this.graphics = this.game.add.graphics(0, 0);
         this.group.add(this.graphics);
 
+        if (this.level.width * this.zoom > 450) {
+            this.zoom = 450 / this.level.width;
+        }
+        if (this.level.height * this.zoom > 400) {
+            this.zoom = 400 / this.level.height;
+        }
         var offset_x = (500 - this.level.width * this.zoom) / 2 + .5 * this.zoom;
         var offset_y = (500 - this.level.height * this.zoom) / 2 + .5 * this.zoom;
         this.origin = new Phaser.Point(offset_x, offset_y);
@@ -83,9 +85,11 @@ class GameState extends Phaser.State {
             fontWeight: 'bold'
         };
         var text = this.game.add.text(250, 24, this.level.getName(), text_style, this.ui);
-        var battery = this.game.add.sprite(32, 32, "ui-battery");
+        var battery = this.game.add.sprite(32, 32, "game-atlas");
+        battery.frameName = "ui-battery.png";
         battery.anchor.set(0.5, 0.5);
-        this.power = this.game.add.sprite(64, 32, "ui-power");
+        this.power = this.game.add.sprite(64, 32, "game-atlas");
+        this.power.frameName = "ui-power.png";
         this.power.anchor.set(0, 0.5);
         this.power.scale.x = this.robot.power;
         this.ui.add(battery);
@@ -120,6 +124,8 @@ class GameState extends Phaser.State {
 
     render () {
         var self = this;
+        // this.graphics.clear();
+        // this.collision_engine.debug(this.graphics, this.zoom / 32);
         this.entities.forEach(function(entity) {
             entity.preRender(self.game.time.elapsedMS);
         });
@@ -197,6 +203,10 @@ class GameState extends Phaser.State {
     }
 
     checkPlayerMove () {
+
+        if (this.robot.power <= 0) {
+            return;
+        }
 
         var move = MOVE.STOP;
         if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
@@ -361,12 +371,13 @@ class GameState extends Phaser.State {
             fill: color,
             fontWeight: 'bold'
         };
-        var x = this.robot.position.x * this.zoom;
-        var y = this.robot.position.y * this.zoom;
-        var stext = this.game.add.text(x, y, text, text_style, this.group);
+        var x = this.robot.position.x;
+        var y = this.robot.position.y;
+        var stext = this.game.add.text(x, y, text, text_style, this.group_fg);
+        stext.scale.set(1 / 32, 1 / 32);
         stext.anchor.set(0.5, 1);
         this.game.add.tween(stext)
-            .to({y: y + to_y * this.zoom}, 500, Phaser.Easing.Sinusoidal.Out, true)
+            .to({y: y + to_y}, 500, Phaser.Easing.Sinusoidal.Out, true)
             .onComplete.add(function () {
                 stext.destroy();
             }, this);

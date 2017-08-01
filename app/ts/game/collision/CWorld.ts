@@ -46,6 +46,7 @@ class CWorld {
         this.quad_def.dimensions.y = this.quad_def.cell_dimensions.y * this.quad_def.grid.y;
         this.quad_def.position.x = - (this.quad_def.dimensions.x - width) / 2;
         this.quad_def.position.y = - (this.quad_def.dimensions.y - height) / 2;
+        console.log(this.bodies);
         this.resetQuads();
         this.updateAllBodies();
     }
@@ -122,9 +123,12 @@ class CWorld {
         var new_quads = this.getQuadIds(body.getBoundingBox());
         this.removeBodyFromQuad(body);
         body.quads = new_quads;
+        // console.log(new_quads);
         for (var i = 0; i < new_quads.length; ++i) {
-            if (this.quads[new_quads[i]].indexOf(body.id) === -1) {
-                this.quads[new_quads[i]].push(body.id);
+            if (this.quads[new_quads[i]] !== undefined) {
+                if (this.quads[new_quads[i]].indexOf(body.id) === -1) {
+                    this.quads[new_quads[i]].push(body.id);
+                }
             }
         }
     }

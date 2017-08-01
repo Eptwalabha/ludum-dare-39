@@ -24,6 +24,7 @@ class Robot extends TurnBasedGameEntity {
     }
 
     updateTick(ts: number, percent: number): void {
+        if (this.power <= 0) return;
         this.position.x = this.origin.x + (this.destination.x - this.origin.x) * percent;
         this.position.y = this.origin.y + (this.destination.y - this.origin.y) * percent;
         this.body.x = this.position.x;
@@ -31,6 +32,10 @@ class Robot extends TurnBasedGameEntity {
     }
 
     endTick(): void {
+        if (this.power <= 0) {
+            this.sprite.frameName = "dead-robot.png";
+            return;
+        }
         this.destination.clone(this.position);
         this.destination.clone(this.origin);
         this.body.moveTo(this.position.x, this.position.y);

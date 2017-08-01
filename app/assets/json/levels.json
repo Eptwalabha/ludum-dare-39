@@ -128,9 +128,15 @@
       ]
     },
     {
-      "name": "first enemy",
-      "layout": "tuto-5",
-      "foes": []
+      "name": "",
+      "layout": "pillars",
+      "item": [
+        { "type": "energy", "options": { "amount": 25}, "position": { "x": 7, "y": 4 } }
+      ]
+    },
+    {
+      "name": "",
+      "layout": "pillars"
     }
   ]
 }
