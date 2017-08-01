@@ -34,6 +34,7 @@ class Robot extends TurnBasedGameEntity {
     endTick(): void {
         if (this.power <= 0) {
             this.sprite.frameName = "dead-robot.png";
+            this.power = 0;
             return;
         }
         this.destination.clone(this.position);
@@ -45,6 +46,10 @@ class Robot extends TurnBasedGameEntity {
         this.power -= this.power_loss_rate * (ts / 1000);
         if (this.cooldown > 0) {
             this.cooldown -= ts;
+        }
+        if (this.power <= 0) {
+            this.power = 0;
+            this.sprite.frameName = "dead-robot.png";
         }
     }
 

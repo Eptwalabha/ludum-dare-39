@@ -1,13 +1,18 @@
 class LoadingState extends Phaser.State {
 
     preload() {
+        this.game.load.json('layouts', 'assets/json/layouts.json');
+        this.game.load.json('levels', 'assets/json/levels.json');
         this.game.load.json('messages', 'assets/json/messages.json');
+        this.game.load.atlas('menu-atlas', 'assets/atlas/menu.png', 'assets/atlas/menu.json');
+        this.game.load.atlas('game-atlas', 'assets/atlas/game.png', 'assets/atlas/game.json');
+        this.game.load.atlas('game-over-atlas', 'assets/atlas/gameover.png', 'assets/atlas/gameover.json');
     }
 
     create() {
         this.stage.smoothed = false;
-        this.game.state.start('menu');
-        // this.continueGame(9);
+        // this.game.state.start('menu');
+        this.continueGame(9);
     }
 
     // TODO à virer

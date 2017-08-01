@@ -37,17 +37,18 @@ gulp.task('fonts', _copy("fonts"));
 gulp.task('json', _copy("json"));
 gulp.task('sass', gulp.series(_sass));
 gulp.task('ts', gulp.series(_ts));
-gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', 'json', 'atlas', _useref));
+// gulp.task('useref', gulp.series('ts', 'sass', 'img', 'fonts', 'json', 'atlas', _useref));
+gulp.task('useref', gulp.series('ts', 'sass', 'fonts', 'json', _useref));
 gulp.task('watch', gulp.series('useref', _watch));
 gulp.task('default', gulp.series('watch'));
 
 function _watch (done) {
-    gulp.watch(paths.src.img, gulp.series('img', _useref));
+    // gulp.watch(paths.src.img, gulp.series('img', _useref));
     gulp.watch(paths.src.fonts, gulp.series('fonts', _useref));
     gulp.watch(paths.src.json, gulp.series('json', _useref));
     gulp.watch(paths.src.sass, gulp.series('sass', _useref));
     gulp.watch(paths.src.ts, gulp.series('ts', _useref));
-    gulp.watch(paths.src.ts, gulp.series('atlas', _useref));
+    // gulp.watch(paths.src.ts, gulp.series('atlas', _useref));
     gulp.watch(paths.src.index, gulp.series(_useref));
     done();
 }

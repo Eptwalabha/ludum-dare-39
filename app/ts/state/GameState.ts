@@ -42,15 +42,11 @@ class GameState extends Phaser.State {
         this.entity_factory = new EntityFactory(this);
     }
 
-    preload () {
-        this.game.load.json('messages', 'assets/json/messages.json');
-        this.game.load.json('layouts', 'assets/json/layouts.json');
-        this.game.load.json('levels', 'assets/json/levels.json');
-        this.game.load.atlas('game-atlas', 'assets/atlas/game.png', 'assets/atlas/game.json');
-    }
+    preload () {}
 
     create () {
         this.game.stage.backgroundColor = "#fff";
+        this.game.stage.smoothed = false;
         this.camera.flash(0x000000);
 
         let self = this;
