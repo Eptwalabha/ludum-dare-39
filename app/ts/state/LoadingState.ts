@@ -10,9 +10,12 @@ class LoadingState extends Phaser.State {
     }
 
     create() {
-        this.stage.smoothed = false;
+        this.game.stage.backgroundColor = "#fff";
+        this.game.stage.smoothed = false;
+        this.camera.flash(0x000000);
         // this.game.state.start('menu');
         this.continueGame(9);
+        this.game.state.start('game-over');
     }
 
     // TODO à virer

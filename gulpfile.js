@@ -139,7 +139,7 @@ function _generateAtlas(done) {
         var cmds = [];
         for (i = 0; i < atlases.length; ++i) {
             var cmd = 'spritesheet-js ' + atlases[i].path + '/* ' +
-                '--format jsonarray --trim --padding 1 ' +
+                '--format jsonarray --trim --powerOfTwo --padding 1 ' +
                 '--path ' + paths.dst.atlas + ' --name ' + atlases[i].name;
             cmds.push(cmd);
         }

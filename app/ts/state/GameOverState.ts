@@ -41,11 +41,11 @@ class GameOverState extends Phaser.State {
 
         var line_t = this.game.add.sprite(250, 0, 'game-over-atlas');
         line_t.frameName = "black-strip.png";
-        line_t.scale.set(500, 1);
+        line_t.scale.set(250, 1);
         line_t.anchor.set(0.5, 0);
         var line_b = this.game.add.sprite(250, 400, 'game-over-atlas');
         line_b.frameName = "black-strip.png";
-        line_b.scale.set(500, 1);
+        line_b.scale.set(250, 1);
         line_b.anchor.set(0.5, 0);
 
         this.background.add(line_t);
