@@ -9,6 +9,10 @@ class GameOverState extends Phaser.State {
         this.level_data = current_level_data;
     }
 
+    preload () {
+        this.game.load.atlas('game-over-atlas', 'assets/atlas/gameover.png', 'assets/atlas/gameover.json');
+    }
+
     create() {
         this.game.stage.backgroundColor = "#fff";
         this.game.stage.smoothed = false;

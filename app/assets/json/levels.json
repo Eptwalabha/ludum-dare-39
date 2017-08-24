@@ -259,6 +259,20 @@
       "item": [
         { "type": "energy", "options": { "amount": 25}, "position": { "x": 7, "y": 4 } }
       ]
+    },
+    {
+      "name": "a hole",
+      "layout": "hole",
+      "foes": [
+        {
+          "type": "pinky-tb",
+          "position": { "x": 4, "y": 4 },
+          "options": {
+            "speed": 1000,
+            "nbr_wave": 8
+          }
+        }
+      ]
     }
   ]
 }

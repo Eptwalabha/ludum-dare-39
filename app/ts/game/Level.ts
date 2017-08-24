@@ -141,6 +141,9 @@ class Level {
                         type = TILE.FLOOR;
                         this.exit_point.set(x, y);
                         break;
+                    case " ":
+                        type = TILE.NONE;
+                        break;
                     default:
                         type = TILE.FLOOR;
                 }
@@ -159,16 +162,7 @@ class Level {
     private buildLevelCollision (state: GameState, world: CWorld) {
         for (var y = 0; y < this.height; ++y) {
             for (var x = 0; x < this.width; ++x) {
-                if (this.map[y][x] === TILE.WALL) {
-                    let box: BoxBody = new BoxBody(x - 0.5, y - 0.5, 1, 1);
-                    box.group = MASK.WALL;
-                    box.mask = MASK.PLAYER | MASK.BULLET;
-                    box.entity = new Wall(x, y, state);
-                    state.entity_factory.spawnTile(x, y, box, true);
-                    // state.collision_engine.addBody(box);
-                } else {
-                    state.entity_factory.spawnTile(x, y, null, false);
-                }
+                this.spawnTile(x, y, this.map[y][x], state);
             }
         }
 
@@ -178,6 +172,21 @@ class Level {
         exit.entity = new ExitItem(this.exit_point.x, this.exit_point.y, state);
         exit.entity.setSprite("bulb-off.png");
         world.addBody(exit);
+    }
+
+    spawnTile (x, y, type: TILE, state: GameState) {
+        switch (type) {
+            case TILE.WALL:
+                let box: BoxBody = new BoxBody(x - 0.5, y - 0.5, 1, 1);
+                box.group = MASK.WALL;
+                box.mask = MASK.PLAYER | MASK.BULLET;
+                box.entity = new Wall(x, y, state);
+                state.entity_factory.spawnTile(x, y, box, true);
+                break;
+            case TILE.FLOOR:
+                state.entity_factory.spawnTile(x, y, null, false);
+                break;
+        }
     }
 
     setDimensions(width: number, height: number) {

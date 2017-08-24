@@ -1,4 +1,5 @@
 enum TILE {
+    NONE,
     FLOOR,
     WALL
 }
@@ -42,7 +43,9 @@ class GameState extends Phaser.State {
         this.entity_factory = new EntityFactory(this);
     }
 
-    preload () {}
+    preload () {
+        this.game.load.atlas('game-atlas', 'assets/atlas/game.png', 'assets/atlas/game.json');
+    }
 
     create () {
         this.game.stage.backgroundColor = "#fff";

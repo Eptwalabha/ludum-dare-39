@@ -16,7 +16,9 @@ class MenuState extends Phaser.State {
 
     init () {}
 
-    preload () {}
+    preload () {
+        this.game.load.atlas('menu-atlas', 'assets/atlas/menu.png', 'assets/atlas/menu.json');
+    }
 
     create () {
         this.game.stage.backgroundColor = "#fff";
